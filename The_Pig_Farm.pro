@@ -19,7 +19,7 @@ SOURCES += \
     Pig.cpp \
     PigSty.cpp \
     PushButtonToSty.cpp \
-    SettingsWindow.cpp \
+    SettingWindow.cpp \
     StyDetailWindow.cpp \
     TradeRecordWindow.cpp \
     main.cpp
@@ -33,14 +33,14 @@ HEADERS += \
     Pig.hpp \
     PigSty.hpp \
     PushButtonToSty.hpp \
-    SettingsWindow.hpp \
+    SettingWindow.hpp \
     StyDetailWindow.hpp \
     TradeRecordWindow.hpp
 
 FORMS += \
     GameMainWindow.ui \
     HomeWindow.ui \
-    SettingsWindow.ui \
+    SettingWindow.ui \
     StyDetailWindow.ui \
     TradeRecordWindow.ui
 

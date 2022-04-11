@@ -1,5 +1,5 @@
-#ifndef SETTINGSWINDOW_H
-#define SETTINGSWINDOW_H
+#ifndef SETTINGWINDOW_H
+#define SETTINGWINDOW_H
 
 #include <QMainWindow>
 
@@ -19,4 +19,4 @@ private:
     Ui::SettingsWindow *ui;
 };
 
-#endif // SETTINGSWINDOW_H
+#endif // SETTINGWINDOW_H
