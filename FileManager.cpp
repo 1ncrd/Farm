@@ -10,7 +10,8 @@ FileManager * file_manager = new FileManager;
 const bool FileManager::WriteEnable = true;
 const QString FileManager::GameDataFolderPath = "./GameData/";
 const QString FileManager::SaleRecordFolderPath = "./TradeRecord/";
-FileManager::FileManager()
+FileManager::FileManager(QObject *parent)
+    : QObject{parent}
 {
 
 }

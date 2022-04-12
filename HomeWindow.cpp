@@ -7,7 +7,7 @@
 
 const int HomeWindow::WindowWidth = 1024;
 const int HomeWindow::WindowHeight = 576;
-const QString HomeWindow::VertionNumber = "1.0";
+const QString HomeWindow::VertionNumber = "2.0";
 
 HomeWindow::HomeWindow(QWidget *parent)
     : QMainWindow(parent)

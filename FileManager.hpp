@@ -1,18 +1,19 @@
 #ifndef FILEMANAGER_H
 #define FILEMANAGER_H
 
+#include <QObject>
 #include <QString>
 #include <QVector>
 #include "Pig.hpp"
 
-class FileManager
+class FileManager : public QObject
 {
 public:
     enum TradeType {Sell = 0, Buy};
     static const bool WriteEnable;
     static const QString SaleRecordFolderPath;
     static const QString GameDataFolderPath;
-    FileManager();
+    FileManager(QObject *parent = nullptr);
     static void CreateTradeRecordFolder();
     static void CreateGameDataFolder();
     static void CreateSaleRecordFile(const QString &file_name);

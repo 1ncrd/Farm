@@ -19,6 +19,7 @@ private:
     PigSpecies species;
     Pig * next_pig;
     Pig * previous_pig;
+    bool is_infected;
 public:
     friend class PigSty;
     explicit Pig(const QString &sty_id_temp, const int &order, const int &blackpig_allowed);

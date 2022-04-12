@@ -12,11 +12,11 @@
 
 int main(int argc, char *argv[])
 {
-
-    qDebug() << qRegisterMetaType<PigSty>("Pig_Sty");
-    qDebug() << qRegisterMetaType<PigSty>("Pig_Sty&");
-    qDebug() << qRegisterMetaType<PigSty::PigStyData>("PigStyData");
-    qDebug() << qRegisterMetaType<PigSty::PigStyData>("PigStyData&");
+    // Register the custom type into the `MetaType` to transport them across the QThreads.
+    qRegisterMetaType<PigSty>("Pig_Sty");
+    qRegisterMetaType<PigSty>("Pig_Sty&");
+    qRegisterMetaType<PigSty::PigStyData>("PigStyData");
+    qRegisterMetaType<PigSty::PigStyData>("PigStyData&");
 
     QApplication a(argc, argv);
 
@@ -33,10 +33,5 @@ int main(int argc, char *argv[])
     // Click the "Start Game" button to show the game window.
     QObject::connect(&home_window, HomeWindow::Start_button_clicked, &Game_window, GameMainWindow::StartGame);
 
-
     return a.exec();
 }
-/*
- *
- *
- */

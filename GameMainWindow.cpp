@@ -31,6 +31,8 @@ GameMainWindow::GameMainWindow(QWidget *parent) :
     this -> thread_to_process -> start();
     this -> thread_to_process -> setPriority(QThread::TimeCriticalPriority);
 
+    file_manager -> moveToThread(thread_to_process);
+
     // Create widget.
     this -> Create_label_date();
     this -> Create_label_money();

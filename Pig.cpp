@@ -21,12 +21,13 @@ int Pig::Random()
 }
 Pig::Pig(const QString &sty_id_temp, const int &order/*The order of the pig born at the same time.*/, const int &sty_species_situation)
 {
-    // Initialize the sty_id, weight and PigSpecies.
+    // Initialize the pig.
     this -> age = 0;
     this -> in_sty_id = sty_id_temp;
     this -> birthday = QString::number(game_timer -> GetTime());
     this -> id = PigIDGenerator(order);
     this -> weight = Random() % 30 + 20;
+    this -> is_infected = false;
 
     // The generation of pig species depends on the sty's situation.
     switch (StySpeciesSituation(sty_species_situation))

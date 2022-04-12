@@ -106,7 +106,6 @@ void Sty_Detail_Window::Start(const PigSty * ptr_sty)
     disconnect(game_timer, GameTimer::timeout, this, 0);
     disconnect(this, Sty_Detail_Window::RequestStyData, 0, 0);
 
-    // Call the `UpdateDetail` once a second to update the pigs' information.
     connect(this, Sty_Detail_Window::RequestStyData, ptr_sty, PigSty::GetStyData);
     connect(this, Sty_Detail_Window::LoadCompleted, this, [ = ]()
     {
@@ -114,6 +113,7 @@ void Sty_Detail_Window::Start(const PigSty * ptr_sty)
         disconnect(this, Sty_Detail_Window::LoadCompleted, 0, 0);
         this -> StartUpdating(ptr_sty);
     });
+    // Before the `Sty_Detail_Window` being showed, load the data first to avoid displaying the blank.
     emit RequestStyData();
 
 }
@@ -127,6 +127,7 @@ void Sty_Detail_Window::LoadContent(const PigSty::PigStyData &pig_data)
 
 void Sty_Detail_Window::StartUpdating(const PigSty * ptr_sty)
 {
+    // Emit the `RequestStyData` once a second to update the pigs' information.
     connect(game_timer, GameTimer::timeout, this, [ = ]()
     {
         // Send a query request to `ptr_sty`

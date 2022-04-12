@@ -43,7 +43,6 @@ void TradeRecordWindow::SetTableHeader()
     for (int column_number = 0; column_number < 6; column_number++)
     {
         ui -> table_header -> setColumnWidth(column_number, ui -> table_record -> columnWidth(column_number) - 3);
-        qDebug() << "c" << ui -> table_record -> columnWidth(column_number);
     }
 
     ui -> table_header -> setFont(QFont("Minecraft", 10));
@@ -67,11 +66,6 @@ void TradeRecordWindow::SetTableHeader()
     ui -> table_header -> setItem(0, 3, header_species);
     ui -> table_header -> setItem(0, 4, header_weight);
     ui -> table_header -> setItem(0, 5, header_age);
-
-    for (int column_number = 0; column_number < 6; column_number++)
-    {
-        qDebug() << ui -> table_header -> columnWidth(column_number);
-    }
 }
 
 void TradeRecordWindow::SetTableRecord()
@@ -85,8 +79,8 @@ void TradeRecordWindow::SetTableRecord()
 
 void TradeRecordWindow::Start()
 {
-    this -> show();
     this -> LoadTableRecord(QString("Record_1.dat"));
+    this -> show();
 }
 
 void TradeRecordWindow::LoadTableRecord(const QString &file_name)
@@ -95,7 +89,7 @@ void TradeRecordWindow::LoadTableRecord(const QString &file_name)
     ui -> table_record -> setRowCount(0);
 
     QVector<FileManager::TradeRecord> * result_qvector = new QVector<FileManager::TradeRecord>;
-    FileManager::ReadTradeRecord(result_qvector, file_name);
+    file_manager -> ReadTradeRecord(result_qvector, file_name);
 
     // Traverse the `result_qvector`.
     QVector<FileManager::TradeRecord>::iterator iterator_record;

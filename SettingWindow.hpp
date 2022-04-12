@@ -3,8 +3,9 @@
 
 #include <QMainWindow>
 
-namespace Ui {
-class SettingsWindow;
+namespace Ui
+{
+    class SettingsWindow;
 }
 
 class SettingsWindow : public QMainWindow
@@ -20,3 +21,6 @@ private:
 };
 
 #endif // SETTINGWINDOW_H
+// TODO set volume;
+// TODO auther information;
+// TODO set update_enable;
