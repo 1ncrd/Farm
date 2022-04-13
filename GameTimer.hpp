@@ -11,9 +11,12 @@ class GameTimer : public QTimer
 private:
     QTimer * timer;
     long total_time;    // Record the total time of the game.
+    static const int DayInterval;
+    float InfectionPosibility;
+
 public:
     explicit GameTimer(QObject *parent = nullptr);
-    static const int DayInterval;
+
     long GetTime();     // Return the total time now.
     // The `Date` do not take the difference in days of the month into account.
     struct Date
@@ -23,8 +26,11 @@ public:
         int year = 0;
     };
     static Date ConvertToDate(int day);
+    void SetInfectionPosibility(const float &posibility);
+    int Random();
 signals:
     Timeout_3Month();
+    InfectionOccur();
 };
 extern GameTimer *game_timer;
 

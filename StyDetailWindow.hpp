@@ -22,19 +22,19 @@ public:
     ~Sty_Detail_Window();
     void SetTablePigInformation();
     void SetTablePigAmount();
-    void Start(const PigSty * ptr_sty);
+    void Start(const int &sty_num);
     void ShowDetail(const PigSty * ptr_sty);
-    void StartUpdating(const PigSty * ptr_sty);
-    void LoadContent(const PigSty::PigStyData &pig_data);
+    void StartUpdating(const int &sty_num);
+    void LoadContent(const QVector<Pig::PigInfo> &sty_data);
     void LoadHeaderOfTablePigInformation();
     void LoadHeaderOfTablePigAmount();
-    void LoadTitle(const PigSty * ptr_sty);
-    void LoadPigInformation(const PigSty::PigStyData &pig_data);
-    void LoadPigAmount(const PigSty::PigStyData &pig_data);
-    void Preload(const PigSty * ptr_sty);
+    void LoadTitle(const int &sty_num);
+    void LoadPigInformation(const QVector<Pig::PigInfo> &sty_data);
+    void LoadPigAmount(const QVector<Pig::PigInfo> &sty_data);
+    void Preload(const int &sty_num);
     void closeEvent(QCloseEvent *event);
 signals:
-    RequestStyData();
+    RequestStyData(const int &sty_num);
     LoadCompleted();
 };
 

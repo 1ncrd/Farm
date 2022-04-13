@@ -1,6 +1,5 @@
 #include "PigSty.hpp"
 #include "Pig.hpp"
-#include "GameTimer.hpp"
 #include <QDebug>
 
 
@@ -9,7 +8,9 @@ PigSty::PigSoldAmount PigSty::pig_sold_amount;
 
 int PigSty::Random() const
 {
-    srand(time(0) ^ (id.toInt() * 6180339887) ^ (4989484820 ^ (pig_amount * 4586834365)));
+    static unsigned int offset = 0;
+    srand(time(0) + id.toInt() + offset);
+    offset += rand();
     return rand();
 }
 PigSty::PigSty(const QString &sty_id_temp, QObject *parent)
@@ -205,6 +206,23 @@ void PigSty::LetAllPigGrow()
     rwlock.unlock();
 }
 
+void PigSty::InfectOnePig()
+{
+    int infected_num = Random() % pig_amount;
+    Pig * ptr_pig_current = ptr_pig_head;
+
+    while (ptr_pig_current != nullptr and infected_num > 0)
+    {
+        ptr_pig_current = ptr_pig_current -> next_pig;
+        infected_num--;
+    }
+
+    if (ptr_pig_current != nullptr)
+    {
+        ptr_pig_current -> is_infected = true;
+    }
+}
+
 QString PigSty::GetID() const
 {
     return this -> id;
@@ -219,30 +237,29 @@ void PigSty::GetStyData()
 {
     // Use sending signal to communicate between thread safely.
     // Critical function: `SendStyData(result_data)`.
-//    qDebug() << id;
-    PigSty::PigStyData result_data;
+    QVector<Pig::PigInfo> result;
 
     if (ptr_pig_head == nullptr)
     {
-        emit SendStyData(result_data);
+        emit ReturnStyData(result);
         return;
     }
 
     Pig * ptr_pig_current = ptr_pig_head;
-    result_data.pig_amount = pig_amount;
-    unsigned int i = 0;
 
     while (ptr_pig_current != nullptr)
     {
-        result_data.pig_id[i] = ptr_pig_current-> id;
-        result_data.pig_species[i] = ptr_pig_current-> species;
-        result_data.pig_weight[i] = ptr_pig_current-> weight;
-        result_data.pig_age[i] = ptr_pig_current-> age;
+        Pig::PigInfo pig_info;
+        pig_info.id = ptr_pig_current-> id;
+        pig_info.species = ptr_pig_current-> species;
+        pig_info.weight = ptr_pig_current-> weight;
+        pig_info.age = ptr_pig_current-> age;
+        pig_info.is_infected = ptr_pig_current -> is_infected;
+        result.append(pig_info);
         ptr_pig_current = ptr_pig_current -> next_pig;
-        i++;
     }
 
-    emit SendStyData(result_data);
+    emit ReturnStyData(result);
     return;
 }
 

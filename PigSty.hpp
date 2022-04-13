@@ -4,8 +4,10 @@
 #include <QObject>
 #include <QString>
 #include <QReadWriteLock>
+#include "GameTimer.hpp"
 #include "Pig.hpp"
 #include "FileManager.hpp"
+
 class PigSty : public QObject
 {
 
@@ -48,6 +50,7 @@ public:
     void DeletePig(Pig * const &ptr_pig_to_delete);
     void DeleteAllPigs();
     void LetAllPigGrow();
+    void InfectOnePig();
     int Random() const;
     int GetPigAmount() const;
 
@@ -58,8 +61,9 @@ public:
 
 
 signals:
-    SendStyData(PigStyData &pig_data);
+    ReturnStyData(QVector<Pig::PigInfo> data);
     SellPigFinished();
+    InfectionSpread(const int &id);
 };
 
 #endif // PIGSTY_H

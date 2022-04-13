@@ -6,6 +6,7 @@
 #include <QCloseEvent>
 #include <QHBoxLayout>
 #include "GameTimer.hpp"
+#include "PigStyManager.hpp"
 
 Sty_Detail_Window::Sty_Detail_Window(QWidget *parent) :
     QMainWindow(parent),
@@ -27,6 +28,8 @@ Sty_Detail_Window::Sty_Detail_Window(QWidget *parent) :
 
     this -> SetTablePigInformation();
     this -> SetTablePigAmount();
+
+    connect(pig_sty_manager, PigStyManager::SendStyData, this, Sty_Detail_Window::LoadContent);
 
     ui -> label_TotalPig -> setText("Total:");
     ui -> label_TotalPig -> setFont(QFont("Minecraft", 14));
@@ -96,9 +99,9 @@ void Sty_Detail_Window::SetTablePigAmount()
     ui -> table_pig_amount -> verticalHeader() -> setHidden(true);
 }
 
-void Sty_Detail_Window::Start(const PigSty * ptr_sty)
+void Sty_Detail_Window::Start(const int &sty_num)
 {
-    this -> LoadTitle(ptr_sty);
+    this -> LoadTitle(sty_num);
 
     // [Bug Solved]: *** Before updating the pigs' information of ptr_sty, disconnect this to other ptr_sty ***.
     // Otherwise the connection command will pile up when you press other button as the Sty_Detail_Window is open.
@@ -106,39 +109,39 @@ void Sty_Detail_Window::Start(const PigSty * ptr_sty)
     disconnect(game_timer, GameTimer::timeout, this, 0);
     disconnect(this, Sty_Detail_Window::RequestStyData, 0, 0);
 
-    connect(this, Sty_Detail_Window::RequestStyData, ptr_sty, PigSty::GetStyData);
+    connect(this, Sty_Detail_Window::RequestStyData, pig_sty_manager, PigStyManager::GetStyData);
     connect(this, Sty_Detail_Window::LoadCompleted, this, [ = ]()
     {
         this -> show();
         disconnect(this, Sty_Detail_Window::LoadCompleted, 0, 0);
-        this -> StartUpdating(ptr_sty);
+        this -> StartUpdating(sty_num);
     });
     // Before the `Sty_Detail_Window` being showed, load the data first to avoid displaying the blank.
-    emit RequestStyData();
+    emit RequestStyData(sty_num);
 
 }
 
-void Sty_Detail_Window::LoadContent(const PigSty::PigStyData &pig_data)
+void Sty_Detail_Window::LoadContent(const QVector<Pig::PigInfo> &sty_data)
 {
-    this -> LoadPigInformation(pig_data);
-    this -> LoadPigAmount(pig_data);
+    this -> LoadPigInformation(sty_data);
+    this -> LoadPigAmount(sty_data);
     emit LoadCompleted();
 }
 
-void Sty_Detail_Window::StartUpdating(const PigSty * ptr_sty)
+void Sty_Detail_Window::StartUpdating(const int &sty_num)
 {
     // Emit the `RequestStyData` once a second to update the pigs' information.
     connect(game_timer, GameTimer::timeout, this, [ = ]()
     {
         // Send a query request to `ptr_sty`
-        emit RequestStyData();
+        emit RequestStyData(sty_num);
     });
 }
 
-void Sty_Detail_Window::LoadTitle(const PigSty * ptr_sty)
+void Sty_Detail_Window::LoadTitle(const int &sty_num)
 {
     // Display a title like "Sty # 01".
-    ui -> label_title -> setText(QString("Sty # ") + ptr_sty -> GetID());
+    ui -> label_title -> setText(QString("Sty # ") + pig_sty_manager -> GetID(sty_num));
     ui -> label_title -> setFont(QFont("Minecraft", 19));
 }
 void Sty_Detail_Window::LoadHeaderOfTablePigInformation()
@@ -205,7 +208,7 @@ void Sty_Detail_Window::LoadHeaderOfTablePigAmount()
     ui -> table_pig_amount -> setItem(3, 0, header_sum);
 }
 
-void Sty_Detail_Window::LoadPigInformation(const PigSty::PigStyData &pig_data)
+void Sty_Detail_Window::LoadPigInformation(const QVector<Pig::PigInfo> &sty_data)
 {
     ui -> table_pig_information -> clearContents();
     ui -> table_pig_information -> setFont(QFont("Minecraft", 9));
@@ -216,13 +219,13 @@ void Sty_Detail_Window::LoadPigInformation(const PigSty::PigStyData &pig_data)
     this -> LoadHeaderOfTablePigInformation();
 
     // Show the pig data.
-    for (int i = 0; i < pig_data.pig_amount; i++)
+    for (int i = 0; i < sty_data.length(); i++)
     {
         // Load the data.
-        QTableWidgetItem * content_id = new QTableWidgetItem(pig_data.pig_id[i]);
-        QTableWidgetItem * content_species = new QTableWidgetItem(Pig::EnumToSpeciesName[pig_data.pig_species[i]]);
-        QTableWidgetItem * content_weight = new QTableWidgetItem(QString::number(pig_data.pig_weight[i], 'f', 1));  // Keep one decimal place
-        QTableWidgetItem * content_age = new QTableWidgetItem(QString::number(pig_data.pig_age[i]));
+        QTableWidgetItem * content_id = new QTableWidgetItem(sty_data[i].id);
+        QTableWidgetItem * content_species = new QTableWidgetItem(Pig::EnumToSpeciesName[sty_data[i].species]);
+        QTableWidgetItem * content_weight = new QTableWidgetItem(QString::number(sty_data[i].weight, 'f', 1));  // Keep one decimal place
+        QTableWidgetItem * content_age = new QTableWidgetItem(QString::number(sty_data[i].age));
         // Set them to center.
         content_id -> setTextAlignment(Qt::AlignCenter);
         content_species -> setTextAlignment(Qt::AlignCenter);
@@ -236,7 +239,7 @@ void Sty_Detail_Window::LoadPigInformation(const PigSty::PigStyData &pig_data)
     }
 }
 
-void Sty_Detail_Window::LoadPigAmount(const PigSty::PigStyData &pig_data)
+void Sty_Detail_Window::LoadPigAmount(const QVector<Pig::PigInfo> &sty_data)
 {
     ui -> table_pig_amount -> clearContents();
     ui -> table_pig_amount -> setFont(QFont("Minecraft", 8));
@@ -246,9 +249,9 @@ void Sty_Detail_Window::LoadPigAmount(const PigSty::PigStyData &pig_data)
     // Count the amount of every species of pig.
     int BlackPig_amount = 0, SmallFlowerPig_amount = 0, BigWhitePig_amount = 0, Pig_Sum = 0;
 
-    for (int i = 0; i < pig_data.pig_amount; i++)
+    for (int i = 0; i < sty_data.length(); i++)
     {
-        switch (pig_data.pig_species[i])
+        switch (sty_data[i].species)
         {
             case Pig::BlackPig:
                 BlackPig_amount++;
@@ -281,21 +284,21 @@ void Sty_Detail_Window::LoadPigAmount(const PigSty::PigStyData &pig_data)
     ui -> table_pig_amount -> setItem(3, 1, Pig_Sum_Item);
 }
 
-void Sty_Detail_Window::Preload(const PigSty *ptr_sty)
+void Sty_Detail_Window::Preload(const int &sty_num)
 {
-    // Load once to get ready
+    // Load once to get ready.
     this -> LoadHeaderOfTablePigInformation();
     this -> LoadHeaderOfTablePigAmount();
 
     disconnect(game_timer, GameTimer::timeout, this, 0);
     disconnect(this, Sty_Detail_Window::RequestStyData, 0, 0);
 
-    connect(this, Sty_Detail_Window::RequestStyData, ptr_sty, PigSty::GetStyData);
+    connect(this, Sty_Detail_Window::RequestStyData, pig_sty_manager, PigStyManager::GetStyData);
     connect(this, Sty_Detail_Window::LoadCompleted, this, [ = ]()
     {
         disconnect(this, Sty_Detail_Window::LoadCompleted, 0, 0);
     });
-    emit RequestStyData();
+    emit RequestStyData(sty_num);
 }
 
 void Sty_Detail_Window::closeEvent(QCloseEvent *event)

@@ -1,12 +1,9 @@
 #include "HomeWindow.hpp"
-#include "GameMainWindow.hpp"
 #include "FileManager.hpp"
-#include <BgmPlayer.h>
+#include "BgmPlayer.hpp"
 #include <QApplication>
-#include <QPushButton>
 #include <QObject>
 #include <QDebug>
-#include <QFont>
 #include "TradeRecordWindow.hpp"
 #include <QMetaType>
 
@@ -17,7 +14,8 @@ int main(int argc, char *argv[])
     qRegisterMetaType<PigSty>("Pig_Sty&");
     qRegisterMetaType<PigSty::PigStyData>("PigStyData");
     qRegisterMetaType<PigSty::PigStyData>("PigStyData&");
-
+    qRegisterMetaType<Pig::PigInfo>("PigInfo");
+    qRegisterMetaType<Pig::PigInfo>("PigInfo&");
     QApplication a(argc, argv);
 
     // Create GameDatas and SalesRecords Folder.
@@ -31,7 +29,7 @@ int main(int argc, char *argv[])
     home_window.show();
 
     // Click the "Start Game" button to show the game window.
-    QObject::connect(&home_window, HomeWindow::Start_button_clicked, &Game_window, GameMainWindow::StartGame);
+    QObject::connect(&home_window, HomeWindow::OnStartButtonClicked, &Game_window, GameMainWindow::StartGame);
 
     return a.exec();
 }

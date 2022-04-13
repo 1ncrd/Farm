@@ -1,4 +1,4 @@
-#include "BgmPlayer.h"
+#include "BgmPlayer.hpp"
 #include <QDebug>
 
 const int BGMPlayer::VolumeMax = 100;

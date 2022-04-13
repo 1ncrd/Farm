@@ -43,7 +43,7 @@ HomeWindow::HomeWindow(QWidget *parent)
     connect(ui -> StartGame_pushButton, QPushButton::clicked, this, [ = ]()
     {
         this -> hide();
-        emit Start_button_clicked();
+        emit OnStartButtonClicked();
     });
     connect(ui -> Quit_pushButton, QPushButton::clicked, this, close);
 

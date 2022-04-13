@@ -2,13 +2,10 @@
 #include "ui_gamemainwindow.h"
 #include <QDebug>
 #include <QScrollBar>
-#include "GameTimer.hpp"
 #include <QLabel>
 
 const int GameMainWindow::WindowWidth = 1024;
 const int GameMainWindow::WindowHeight = 576;
-const int GameMainWindow::PigStyPerRow = 10;
-const int GameMainWindow::PigStyPerColumn = 10;
 
 GameMainWindow::GameMainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -20,11 +17,11 @@ GameMainWindow::GameMainWindow(QWidget *parent) :
     this -> setWindowTitle("The Pig Farm");
     this -> setWindowIcon(QIcon(":/Resources/Picture/PigFace.png"));
 
-    // **************************************************************
-    // The task about data processing would be put in it.
+    // *********************************************************************
+    // The task about data processing would be put into `thread_to_process`.
     // The main thread should only process the task about UI display
     // to avoid interface lag.
-    // **************************************************************
+    // *********************************************************************
 
     // Start `thread_to_process`.
     this -> thread_to_process = new QThread;
@@ -32,6 +29,7 @@ GameMainWindow::GameMainWindow(QWidget *parent) :
     this -> thread_to_process -> setPriority(QThread::TimeCriticalPriority);
 
     file_manager -> moveToThread(thread_to_process);
+    pig_sty_manager -> moveToThread(thread_to_process);
 
     // Create widget.
     this -> Create_label_date();
@@ -48,8 +46,6 @@ GameMainWindow::GameMainWindow(QWidget *parent) :
     // It should determine the order of the function execution.
     // ********************************************************
 
-    // Set the connection between widget and pig data.
-    this -> Connect_PigProcess();
     // Read the pig data after all the process about pig being finished.
     this -> Connect_label_date();
     this -> Connect_label_money();
@@ -59,7 +55,6 @@ GameMainWindow::GameMainWindow(QWidget *parent) :
 
     // Without the "Sty_Detail_Window_PreLoad()",
     // there will be a bit of lag to show the `sty_window` when the user clicks the pushbutton_entersty first time for some unknown reason.
-    this -> Sty_Detail_Window_PreLoad();
 }
 
 GameMainWindow::~GameMainWindow()
@@ -69,12 +64,7 @@ GameMainWindow::~GameMainWindow()
     this -> thread_to_process -> wait();
     this -> thread_to_process -> deleteLater();
 
-    // The 100 pig_sty were moved to `thread_to_process`. So their `parent` attribute were `nullptr`.
-    for (int i = 0; i < PigStyAmount; i++)
-    {
-        pig_sty[i] -> deleteLater();
-    }
-
+    delete pig_sty_manager;
     delete file_manager;
     delete game_timer;
     delete ui;
@@ -83,8 +73,12 @@ GameMainWindow::~GameMainWindow()
 void GameMainWindow::StartGame()
 {
     // Start the game.
-    this -> show();
+    pig_sty_manager -> Create100Sty();
+    this -> Sty_Detail_Window_PreLoad();
+    game_timer -> SetInfectionPosibility(0.2);
     game_timer -> start();
+    this -> show();
+
 }
 
 void GameMainWindow::Create_label_date()
@@ -144,9 +138,9 @@ void GameMainWindow::Create_area_choose_sty()
 
     // Create 100 `PushButton_EnterSty` object and place them into the `scroll_area_choose_sty`.
 
-    for (int i = 0; i < PigStyPerColumn; i++)
+    for (int i = 0; i < PigStyManager::PigStyPerColumn; i++)
     {
-        for (int j = 0; j < PigStyPerRow; j++)
+        for (int j = 0; j < PigStyManager::PigStyPerRow; j++)
         {
             const int W = 60;
             const int H = 25;
@@ -167,14 +161,7 @@ void GameMainWindow::Create_area_choose_sty()
                         W, H);
         }
     }
-
-    // Create 100 `Pig_Sty` object.
-    for (int i = 0; i < PigStyAmount; i++)
-    {
-        pig_sty[i] = new PigSty(QString::number(i));
-    }
 }
-
 void GameMainWindow::Create_sty_window()
 {
     // Create a `Sty_Detail_Window` object.
@@ -207,7 +194,7 @@ void GameMainWindow::Connect_label_date()
 void GameMainWindow::Connect_label_money()
 {
     // Update the `label_money` after the last `pig_sty` finished the sale.
-    connect(pig_sty[99], PigSty::SellPigFinished, this, [ = ]()
+    connect(pig_sty_manager, PigStyManager::SellPigFinished, this, [ = ]()
     {
         label_money -> setText(QString("Money:\t") + QString::number(PigSty::money));
         label_money -> adjustSize();
@@ -217,7 +204,7 @@ void GameMainWindow::Connect_label_money()
 void GameMainWindow::Connect_label_pig_sold_amount()
 {
     // Update the `label_pig_sold_amount` after the last `pig_sty` finished the sale.
-    connect(pig_sty[99], PigSty::SellPigFinished, this, [ = ]()
+    connect(pig_sty_manager, PigStyManager::SellPigFinished, this, [ = ]()
     {
         label_pig_sold_amount -> setText(QString("Amount of pig sold:") +
                                          QString("\n\nBlackPig:\t\t") + QString::number(PigSty::pig_sold_amount.BlackPig) +
@@ -231,13 +218,13 @@ void GameMainWindow::Connect_label_pig_sold_amount()
 void GameMainWindow::Connect_sty_window()
 {
     // Press the ptr_btn_entersty to start the `sty_window`.
-    for (int i = 0; i < PigStyAmount; i++)
+    for (int i = 0; i < PigStyManager::PigStyAmount; i++)
     {
         // Let the `sty_window` accept the data from `pig_sty`.
-        connect(pig_sty[i], PigSty::SendStyData, sty_window, Sty_Detail_Window::LoadContent);
-        connect(ptr_btn_entersty[i], PushButtonToSty::clicked, sty_window, [ = ]()
+
+        connect(ptr_btn_entersty[i], PushButtonToSty::clicked, this, [ = ]()
         {
-            sty_window -> Start(pig_sty[i]);
+            sty_window -> Start(i);
         });
     }
 }
@@ -247,40 +234,7 @@ void GameMainWindow::Connect_trade_record_window()
     connect(button_to_trade_record_window, QPushButton::clicked, trade_record_window, TradeRecordWindow::Start);
 }
 
-void GameMainWindow::Connect_PigProcess()
-{
-    // Pigs grow once a second.
-    for (int i = 0; i < PigStyAmount; i++)
-    {
-        pig_sty[i] -> moveToThread(thread_to_process);
-    }
-
-    for (int i = 0; i < PigStyAmount; i++)
-    {
-        connect(this, GameMainWindow::Pig_Sty_SellPig, pig_sty[i], PigSty::SellPig);
-        connect(this, GameMainWindow::Pig_Sty_LetAllPigGrow, pig_sty[i], PigSty::LetAllPigGrow);
-        connect(this, GameMainWindow::Pig_Sty_AddPig, pig_sty[i], PigSty::AddPig);
-        connect(this, GameMainWindow::Pig_Sty_AddRandomPig, pig_sty[i], PigSty::AddRandomPig);
-    }
-
-    // Let pigs grow once a seconds.
-    connect(game_timer, GameTimer::timeout, this, [ = ]()
-    {
-        emit Pig_Sty_LetAllPigGrow();
-    });
-
-    // Timeout_3Month
-    connect(game_timer, GameTimer::Timeout_3Month, this, [ = ]()
-    {
-        // Sell pigs that meet the requirements once every three months.
-        emit Pig_Sty_SellPig();
-
-        // After selling the pigs, randomly replenish(补充) pigs in the remaining space
-        emit Pig_Sty_AddRandomPig();
-    });
-}
-
 void GameMainWindow::Sty_Detail_Window_PreLoad()
 {
-    sty_window -> Preload(pig_sty[99]);
+    sty_window -> Preload(99);
 }

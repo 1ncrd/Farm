@@ -29,7 +29,7 @@ public:
     ~HomeWindow();
 
 signals:
-    Start_button_clicked();
+    OnStartButtonClicked();
 
 };
 #endif // HOMEWINDOW_H

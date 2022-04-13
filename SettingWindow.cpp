@@ -1,5 +1,5 @@
 #include "SettingWindow.hpp"
-#include "ui_settings_window.h"
+#include "ui_settingwindow.h"
 
 SettingsWindow::SettingsWindow(QWidget *parent) :
     QMainWindow(parent),

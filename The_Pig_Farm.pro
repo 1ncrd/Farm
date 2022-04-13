@@ -18,6 +18,7 @@ SOURCES += \
     HomeWindow.cpp \
     Pig.cpp \
     PigSty.cpp \
+    PigStyManager.cpp \
     PushButtonToSty.cpp \
     SettingWindow.cpp \
     StyDetailWindow.cpp \
@@ -25,13 +26,14 @@ SOURCES += \
     main.cpp
 
 HEADERS += \
-    BgmPlayer.h \
+    BgmPlayer.hpp \
     FileManager.hpp \
     GameMainWindow.hpp \
     GameTimer.hpp \
     HomeWindow.hpp \
     Pig.hpp \
     PigSty.hpp \
+    PigStyManager.hpp \
     PushButtonToSty.hpp \
     SettingWindow.hpp \
     StyDetailWindow.hpp \

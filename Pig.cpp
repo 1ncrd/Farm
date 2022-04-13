@@ -1,22 +1,17 @@
-#include "GameTimer.hpp"
 #include "Pig.hpp"
+#include "GameTimer.hpp"
 #include <cstdlib>
 #include <ctime>
 #include <QDebug>
 
+extern GameTimer * game_timer;
 const short Pig::PriceBlackPig = 30, Pig::PriceSmallFlowerPig = 14, Pig::PriceBigWhitePig = 12;
 int Pig::Random()
 {
-    /*
-     * I encapsulated a function to generate random numbers
-     * to solve the problem of too short random number generation intervals(much less then 1s).
-     * Because each round of random number generation takes less than a second,
-     * the function time(0) return same number in a second.
-     * So I add the sty_id and the pig_id into the generation process.
-     * the constant was selected from the first 30 digits of the golden section(0.6180339887 4989484820 4586834365...)
-     * This algorithm involves sty_id and pig_id in the seed generation process for the better randomness.
-     */
-    srand(time(0) ^ (in_sty_id.toInt() * 6180339887) ^ (4989484820 ^ (id.toInt() * 4586834365)));
+    // Generate different number in one second.
+    static unsigned int offset = 0;
+    srand(time(0) + id.toInt() + offset);
+    offset += rand();
     return rand();
 }
 Pig::Pig(const QString &sty_id_temp, const int &order/*The order of the pig born at the same time.*/, const int &sty_species_situation)
@@ -67,10 +62,10 @@ QString Pig::PigIDGenerator(const int &order)    // The order aim to distinguish
 }
 
 
-std::map<int, QString> Pig::EnumToSpeciesName =
+std::map<Pig::PigSpecies, QString> Pig::EnumToSpeciesName =
 {
-    {0, QString("Black pig")}, {1, QString("Small flower pig")},
-    {2, QString("Big white pig")}
+    {Pig::BlackPig, QString("Black pig")}, {Pig::SmallFlowerPig, QString("Small flower pig")},
+    {Pig::BigWhitePig, QString("Big white pig")}
 };
 
 std::map<Pig::PigSpecies, int> Pig::SpeciesPrice =

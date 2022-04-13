@@ -1,5 +1,4 @@
 #include "GameTimer.hpp"
-#include <QTimer>
 #include <QDebug>
 
 GameTimer *game_timer = new GameTimer;
@@ -9,6 +8,7 @@ GameTimer::GameTimer(QObject *parent)
     : QTimer{parent}
 {
     total_time = 0;
+    InfectionPosibility = 0;
     this -> setInterval(DayInterval);
     connect(this, QTimer::timeout, this, [&]()
     {
@@ -17,13 +17,18 @@ GameTimer::GameTimer(QObject *parent)
             emit Timeout_3Month();
         }
 
+        if (/*total_time > 50 and */(Random() % RAND_MAX) < RAND_MAX * InfectionPosibility)
+        {
+            emit InfectionOccur();
+        }
+
         total_time++;
     });
 }
 
 long GameTimer::GetTime()
 {
-    return total_time;
+    return this -> total_time;
 }
 
 GameTimer::Date GameTimer::ConvertToDate(int day)
@@ -33,4 +38,19 @@ GameTimer::Date GameTimer::ConvertToDate(int day)
     int year_temp = day / 360 + 1;
     Date date_temp{day_temp, month_temp, year_temp};
     return date_temp;
+}
+
+void GameTimer::SetInfectionPosibility(const float &posibility)
+{
+    this -> InfectionPosibility = posibility;
+}
+
+int GameTimer::Random()
+{
+    static unsigned int offset = 0;
+    srand(time(0));
+    offset = offset + rand() * rand();
+    srand(offset);
+
+    return rand();
 }
