@@ -8,6 +8,7 @@
 
 class FileManager : public QObject
 {
+    Q_OBJECT
 public:
     enum TradeType {Sell = 0, Buy};
     static const bool WriteEnable;
@@ -26,14 +27,17 @@ public:
         float pig_weight;
         int pig_age;
     };
-    static std::map<int, QString> EnumToTradeTypeName;            // Literal meaning
+    static std::map<TradeType, QString> EnumToTradeTypeName;            // Literal meaning
 
     static void WriteTradeRecord(const TradeRecord &record, const QString &file_name);
     static QString FormatTradeRecord(const TradeRecord &record);
     static bool CreateDir(const QString &path);
     static void CreateFile(const QString &file_path, const QString &file_name);
-    static void ReadTradeRecord(QVector<TradeRecord> * result_qvector,  const QString &file_name);
+    void ReadTradeRecord(QVector<TradeRecord> * result_qvector,  const QString &file_name);
     static void ClearRecordFile(const QString &file_name);
+    static bool CheckFileIsEmpty(const QString &file_name);
+signals:
+    ReadTradeRecordCompleted();
 };
 extern FileManager * file_manager;
 

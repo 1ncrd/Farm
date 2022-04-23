@@ -1,6 +1,5 @@
 #include "StyDetailWindow.hpp"
 #include "ui_stydetailwindow.h"
-#include "GameMainWindow.hpp"
 #include <QStringList>
 #include <QTableWidgetItem>
 #include <QCloseEvent>
@@ -8,12 +7,16 @@
 #include "GameTimer.hpp"
 #include "PigStyManager.hpp"
 
+const int Sty_Detail_Window::WindowWidth = 512;
+const int Sty_Detail_Window::WindowHeight = 576;
+
 Sty_Detail_Window::Sty_Detail_Window(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::StyDetailWindow)
 {
     ui->setupUi(this);
-    this -> setFixedSize(GameMainWindow::WindowWidth / 2, GameMainWindow::WindowHeight);
+
+    this -> setFixedSize(WindowWidth, WindowHeight);
     this -> setWindowTitle("Details");
     this -> setWindowIcon(QIcon(":/Resources/Picture/PigFace.png"));
     // Block other Windows when showing.
@@ -28,11 +31,11 @@ Sty_Detail_Window::Sty_Detail_Window(QWidget *parent) :
 
     this -> SetTablePigInformation();
     this -> SetTablePigAmount();
-
-    connect(pig_sty_manager, PigStyManager::SendStyData, this, Sty_Detail_Window::LoadContent);
-
     ui -> label_TotalPig -> setText("Total:");
     ui -> label_TotalPig -> setFont(QFont("Minecraft", 14));
+
+    // Receive the data sent from `pig_sty_manager`.
+    connect(pig_sty_manager, PigStyManager::SendStyData, this, Sty_Detail_Window::LoadContent);
 }
 
 Sty_Detail_Window::~Sty_Detail_Window()
@@ -231,6 +234,16 @@ void Sty_Detail_Window::LoadPigInformation(const QVector<Pig::PigInfo> &sty_data
         content_species -> setTextAlignment(Qt::AlignCenter);
         content_weight -> setTextAlignment(Qt::AlignCenter);
         content_age -> setTextAlignment(Qt::AlignCenter);
+
+        // Infection
+        if (sty_data[i].is_infected)
+        {
+            content_id -> setBackground(QBrush(QColor(255, 192, 203)));
+            content_species -> setBackground(QBrush(QColor(255, 192, 203)));
+            content_weight -> setBackground(QBrush(QColor(255, 192, 203)));
+            content_age -> setBackground(QBrush(QColor(255, 192, 203)));
+        }
+
         int line_current = i + 1;
         ui -> table_pig_information -> setItem(line_current, 0, content_id);
         ui -> table_pig_information -> setItem(line_current, 1, content_species);

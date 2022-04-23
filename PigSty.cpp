@@ -1,18 +1,13 @@
 #include "PigSty.hpp"
 #include "Pig.hpp"
 #include <QDebug>
-
+#include "MyRandom.hpp"
 
 long PigSty::money = 0;
 PigSty::PigSoldAmount PigSty::pig_sold_amount;
+int PigSty::InfectionTransRateInSty = 50;
+int PigSty::InfectionTransRateAcrossSty = 15;
 
-int PigSty::Random() const
-{
-    static unsigned int offset = 0;
-    srand(time(0) + id.toInt() + offset);
-    offset += rand();
-    return rand();
-}
 PigSty::PigSty(const QString &sty_id_temp, QObject *parent)
     : QObject{parent}
 {
@@ -28,19 +23,16 @@ PigSty::PigSty(const QString &sty_id_temp, QObject *parent)
 
     this -> pig_amount = 0;
     this -> ptr_pig_head = nullptr;
-    // When a new pig sty is created, add five pigs automatically.
-    AddPig(5);
 }
 
 PigSty::~PigSty()
 {
     this -> DeleteAllPigs();
-//    qDebug() << "Pig_Sty released." << sty_id;
+    qDebug() << "PigSty released." << id;
 }
 
 void PigSty::AddPig(int number/* = 1*/)
 {
-    rwlock.lockForRead();
     // Add pig(s) to the end of the linked list.
     Pig * ptr_pig_current = this -> ptr_pig_head;
     int order = 0;
@@ -74,12 +66,36 @@ void PigSty::AddPig(int number/* = 1*/)
         ptr_pig_current = ptr_pig_current -> next_pig;
     }
 
-    rwlock.unlock();
+}
+
+void PigSty::AppendPig(Pig * const &ptr_pig_to_append_head)
+{
+    if (ptr_pig_to_append_head == nullptr)
+    {
+        return;
+    }
+
+    if (ptr_pig_head == nullptr)
+    {
+        ptr_pig_head = ptr_pig_to_append_head;
+    }
+    else
+    {
+        Pig * ptr_pig_current = ptr_pig_head;
+
+        while (ptr_pig_current -> next_pig != nullptr)
+        {
+            ptr_pig_current = ptr_pig_current -> next_pig;
+        }
+
+        ptr_pig_current -> next_pig = ptr_pig_to_append_head;
+        ptr_pig_to_append_head -> previous_pig = ptr_pig_current;
+    }
 }
 
 void PigSty::AddRandomPig()
 {
-    int number = this -> Random() % (10 - this -> GetPigAmount());
+    int number = Random() % (10 - this -> GetPigAmount());
     AddPig(number);
 }
 
@@ -88,7 +104,11 @@ void PigSty::SellPig()
  * Sell pigs meet the requirements.
  */
 {
-    rwlock.lockForRead();
+    if (ptr_pig_head == nullptr)
+    {
+        return;
+    }
+
     Pig * ptr_pig_current = ptr_pig_head;
     Pig * ptr_pig_next = ptr_pig_head -> next_pig;
 
@@ -120,7 +140,6 @@ void PigSty::SellPig()
         emit SellPigFinished();
     }
 
-    rwlock.unlock();
 }
 void PigSty::CountSoldPig(Pig * const &ptr_pig_to_count) const
 {
@@ -155,7 +174,10 @@ void PigSty::RecordTrade(const FileManager::TradeType &type, Pig * const &ptr_pi
 
 void PigSty::DeletePig(Pig * const &ptr_pig_to_delete)
 {
-    rwlock.lockForRead();
+    if (ptr_pig_to_delete == nullptr)
+    {
+        return;
+    }
 
     // When the ptr_pig_to_delete at the beginning of the list.
     if (ptr_pig_to_delete == ptr_pig_head)
@@ -183,13 +205,10 @@ void PigSty::DeletePig(Pig * const &ptr_pig_to_delete)
         pig_amount--;
     }
 
-    rwlock.unlock();
 }
 
 void PigSty::LetAllPigGrow()
 {
-    rwlock.lockForRead();
-
     if (ptr_pig_head == nullptr)
     {
         return;
@@ -202,25 +221,190 @@ void PigSty::LetAllPigGrow()
         ptr_pig_current -> Grow();
         ptr_pig_current = ptr_pig_current -> next_pig;
     }
-
-    rwlock.unlock();
 }
 
 void PigSty::InfectOnePig()
 {
-    int infected_num = Random() % pig_amount;
+    if (ptr_pig_head == nullptr)
+    {
+        return;
+    }
+
+    int infected_pig_num = Random() % pig_amount;
     Pig * ptr_pig_current = ptr_pig_head;
 
-    while (ptr_pig_current != nullptr and infected_num > 0)
+    while (ptr_pig_current != nullptr and infected_pig_num > 0)
     {
         ptr_pig_current = ptr_pig_current -> next_pig;
-        infected_num--;
+        infected_pig_num--;
     }
 
     if (ptr_pig_current != nullptr)
     {
         ptr_pig_current -> is_infected = true;
+        ptr_pig_current -> infected_time = 0;
     }
+}
+
+void PigSty::InfectionSpreadInSty()
+{
+    if (ptr_pig_head == nullptr)
+    {
+        return;
+    }
+
+    Pig * ptr_pig_current = ptr_pig_head;
+
+    if (this -> InfectionExists())
+    {
+        // If the infection exists, start spreading.
+        while (ptr_pig_current != nullptr)
+        {
+            if (!(ptr_pig_current -> is_infected) and (Probability(InfectionTransRateInSty)))
+            {
+                ptr_pig_current -> is_infected = true;
+            }
+
+            ptr_pig_current = ptr_pig_current -> next_pig;
+        }
+    }
+}
+
+void PigSty::InfectionSpreadFromOthers()
+{
+    if (ptr_pig_head == nullptr)
+    {
+        return;
+    }
+
+    Pig * ptr_pig_current = ptr_pig_head;
+
+    while (ptr_pig_current != nullptr)
+    {
+        if (!(ptr_pig_current -> is_infected) and (Probability(InfectionTransRateAcrossSty)))
+        {
+            ptr_pig_current -> is_infected = true;
+        }
+
+        ptr_pig_current = ptr_pig_current -> next_pig;
+    }
+}
+
+bool PigSty::InfectionExists()
+{
+    if (ptr_pig_head == nullptr)
+    {
+        return false;
+    }
+
+    Pig * ptr_pig_current = ptr_pig_head;
+
+    while (ptr_pig_current != nullptr)
+    {
+        if (ptr_pig_current -> is_infected)
+        {
+            return true;
+        }
+
+        ptr_pig_current = ptr_pig_current -> next_pig;
+    }
+
+    return false;
+}
+
+Pig * PigSty::ExtractInfectedPigs()
+{
+    if (ptr_pig_head == nullptr)
+    {
+        return nullptr;
+    }
+
+    Pig * result_pig_head = nullptr;
+    Pig * result_pig_current = nullptr;
+    // The operation about deletion need two pointers.
+    Pig * ptr_pig_current = ptr_pig_head;
+    Pig * ptr_pig_next = ptr_pig_head -> next_pig;
+
+    while (ptr_pig_next != nullptr)
+    {
+        if (ptr_pig_current -> is_infected)
+        {
+            if (result_pig_head == nullptr)
+            {
+                ExtractPig(ptr_pig_current);
+                result_pig_head = ptr_pig_current;
+                result_pig_head -> previous_pig = nullptr;
+                result_pig_head -> next_pig = nullptr;
+                result_pig_current = result_pig_head;
+            }
+            else
+            {
+                ExtractPig(ptr_pig_current);
+                result_pig_current -> next_pig = ptr_pig_current;
+                result_pig_current -> next_pig -> previous_pig = result_pig_current;
+                result_pig_current = result_pig_current -> next_pig;
+                result_pig_current -> next_pig = nullptr;
+            }
+        }
+
+        ptr_pig_current = ptr_pig_next;
+        ptr_pig_next = ptr_pig_next -> next_pig;
+    }
+
+    if (ptr_pig_current -> is_infected)
+    {
+        if (result_pig_head == nullptr)
+        {
+            ExtractPig(ptr_pig_current);
+            result_pig_head = ptr_pig_current;
+            result_pig_head -> previous_pig = nullptr;
+            result_pig_head -> next_pig = nullptr;
+            result_pig_current = result_pig_head;
+        }
+        else
+        {
+            ExtractPig(ptr_pig_current);
+            result_pig_current -> next_pig = ptr_pig_current;
+            result_pig_current -> next_pig -> previous_pig = result_pig_current;
+            result_pig_current -> next_pig -> next_pig = nullptr;
+            result_pig_current = result_pig_current -> next_pig;
+
+        }
+    }
+
+    return result_pig_head;
+}
+
+void PigSty::ExtractPig(Pig * pig_middle)
+{
+    if (pig_middle == nullptr)
+    {
+        return;
+    }
+
+    if (pig_middle == ptr_pig_head)
+    {
+        ptr_pig_head = ptr_pig_head -> next_pig;
+
+        if (ptr_pig_head != nullptr)
+        {
+            ptr_pig_head -> previous_pig = nullptr;
+        }
+
+        pig_amount--;
+    }
+    else
+    {
+        pig_middle -> previous_pig -> next_pig = pig_middle -> next_pig;
+
+        if (pig_middle -> next_pig != nullptr)
+        {
+            pig_middle -> next_pig -> previous_pig = pig_middle -> previous_pig;
+        }
+
+        pig_amount--;
+    }
+
 }
 
 QString PigSty::GetID() const
@@ -238,6 +422,7 @@ void PigSty::GetStyData()
     // Use sending signal to communicate between thread safely.
     // Critical function: `SendStyData(result_data)`.
     QVector<Pig::PigInfo> result;
+    bool infection_exists = false;
 
     if (ptr_pig_head == nullptr)
     {
@@ -255,12 +440,45 @@ void PigSty::GetStyData()
         pig_info.weight = ptr_pig_current-> weight;
         pig_info.age = ptr_pig_current-> age;
         pig_info.is_infected = ptr_pig_current -> is_infected;
+
+        if (pig_info.is_infected)
+        {
+            infection_exists = true;
+        }
+
         result.append(pig_info);
+
         ptr_pig_current = ptr_pig_current -> next_pig;
     }
 
     emit ReturnStyData(result);
     return;
+}
+
+bool PigSty::CheckStyIsInfected()
+{
+    bool is_infected = false;
+
+    if (ptr_pig_head == nullptr)
+    {
+        emit ReturnIsInfected(is_infected);
+        return is_infected;
+    }
+
+    Pig * ptr_pig_current = ptr_pig_head;
+
+    while (ptr_pig_current != nullptr)
+    {
+        if (ptr_pig_current -> is_infected)
+        {
+            is_infected = true;
+        }
+
+        ptr_pig_current = ptr_pig_current -> next_pig;
+    }
+
+    emit ReturnIsInfected(is_infected);
+    return is_infected;
 }
 
 PigSty::StySpeciesSituation PigSty::CheckStySpeciesSituation() const
@@ -287,8 +505,6 @@ PigSty::StySpeciesSituation PigSty::CheckStySpeciesSituation() const
 
 void PigSty::DeleteAllPigs()
 {
-    rwlock.lockForRead();
-
     if (ptr_pig_head == nullptr)
     {
         return;
@@ -305,5 +521,5 @@ void PigSty::DeleteAllPigs()
     }
 
     delete ptr_pig_current;
-    rwlock.unlock();
+    ptr_pig_head = nullptr;
 }

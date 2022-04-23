@@ -2,8 +2,8 @@
 #define PIGSTYMANAGER_HPP
 
 #include <QObject>
-#include "GameTimer.hpp"
 #include "PigSty.hpp"
+#include "QuarantinePigSty.hpp"
 
 class PigStyManager : public QObject
 {
@@ -13,17 +13,30 @@ public:
     static const int PigStyAmount = 100;
     static const int PigStyPerRow;
     static const int PigStyPerColumn;
+    static const QString QuarantineStyID;
+    static const int QuarantineStyID_int;
 private:
     PigSty * pig_sty[PigStyAmount];
+    QuarantinePigSty * quarantine_sty;
+    float InfectionPosibility;
 public:
     PigStyManager(QObject * parent = nullptr);
+    ~PigStyManager();
     QString GetID(const int &sty_num);
     void GetStyData(const int &sty_num);
-    void Create100Sty();
-    int Random();
+    void GetQuarantineStyData();
+    void StartTheFarm();
+    void InfectionSpreadAcrossSty();
+    void SetInfectionPosibility(const float &posibility);
+    void DisposeQuarantineSty();
 signals:
+    InfectionOccur();
     SellPigFinished();
-    SendStyData(const QVector<Pig::PigInfo> &sty_data);
+    SendStyData(QVector<Pig::PigInfo> sty_data);
+    SendQuarantineStyData(QVector<Pig::PigInfo> sty_data);
+    StyIsInfected(int sty_num, bool is_infected);
+    InfectionExists(bool infecion_exists);
+    QuarantineAllInfectedPig();
 };
 extern PigStyManager * pig_sty_manager;
 #endif // PIGSTYMANAGER_HPP

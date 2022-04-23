@@ -4,6 +4,10 @@
 #include <QDebug>
 #include <QFont>
 #include <QStatusBar>
+#include <QMessageBox>
+#include "BgmPlayer.hpp"
+#include "GameMainWindow.hpp"
+#include "SettingWindow.hpp"
 
 const int HomeWindow::WindowWidth = 1024;
 const int HomeWindow::WindowHeight = 576;
@@ -24,10 +28,15 @@ HomeWindow::HomeWindow(QWidget *parent)
     QPixmap Pigimage;
     // Get the pig picture and set up the logo.
     Pigimage.load(":/Resources/Picture/PigFace.png");
-    ui -> PigFace_label -> setScaledContents(true);
-    ui -> PigFace_label -> setPixmap(Pigimage);
-    ui -> PigFace_label -> resize(100, 100);
-//    ui -> Title_Welcome_label -> setFont(QFont("Minecraft", 36));
+    ui -> label_pig_logo -> setScaledContents(true);
+    ui -> label_pig_logo -> setPixmap(Pigimage);
+    ui -> label_pig_logo -> resize(100, 100);
+    ui -> label_title_welcome -> setFont(QFont("Minecraft", 36));
+    ui -> pushButton_start_game -> setFont(QFont("Minecraft", 15));
+    ui -> pushButton_setting -> setFont(QFont("Minecraft", 15));
+    ui -> pushButton_quit -> setFont(QFont("Minecraft", 15));
+    ui -> pushButton_introduction -> setFont(QFont("Minecraft", 10));
+    ui -> pushButton_about -> setFont(QFont("Minecraft", 10));
 //    ui -> StartGame_pushButton -> setStyleSheet("background: gray");
 
     // Set the statusbar
@@ -40,12 +49,23 @@ HomeWindow::HomeWindow(QWidget *parent)
     MyStatusBar -> addWidget(Version_label);
 
     // Connect the function of the button.
-    connect(ui -> StartGame_pushButton, QPushButton::clicked, this, [ = ]()
+    connect(ui -> pushButton_start_game, QPushButton::clicked, this, [ = ]()
     {
         this -> hide();
         emit OnStartButtonClicked();
     });
-    connect(ui -> Quit_pushButton, QPushButton::clicked, this, close);
+    connect(ui -> pushButton_setting, QPushButton::clicked, this, [ = ]()
+    {
+        emit OnSettingButtonClicked();
+    });
+    connect(ui -> pushButton_quit, QPushButton::clicked, this, close);
+    connect(ui -> pushButton_about, QPushButton::clicked, this, [ = ]()
+    {
+        QString message("<p><strong>The Pig Farm</strong></p><p>Based on Qt 6.2.2. </p>"
+                        "<p>Open source URL:</p>"
+                        "<p><a href=https://github.com/1ncrd/Farm>https://github.com/1ncrd/Farm</a></p>");
+        QMessageBox::about(this, QString("About"), message);
+    });
 
 }
 

@@ -45,14 +45,13 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>75</y>
+      <y>115</y>
       <width>492</width>
-      <height>435</height>
+      <height>401</height>
      </rect>
     </property>
     <property name="font">
      <font>
-      <family>Minecraft</family>
       <pointsize>7</pointsize>
      </font>
     </property>
@@ -82,6 +81,9 @@
     </property>
     <property name="selectionBehavior">
      <enum>QAbstractItemView::SelectItems</enum>
+    </property>
+    <property name="showGrid">
+     <bool>false</bool>
     </property>
     <property name="rowCount">
      <number>0</number>
@@ -118,7 +120,7 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>50</y>
+      <y>90</y>
       <width>474</width>
       <height>25</height>
      </rect>
@@ -201,6 +203,89 @@
       <set>NoItemFlags</set>
      </property>
     </item>
+   </widget>
+   <widget class="QWidget" name="gridLayoutWidget">
+    <property name="geometry">
+     <rect>
+      <x>74</x>
+      <y>50</y>
+      <width>391</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <layout class="QGridLayout" name="gridLayout">
+     <item row="1" column="1">
+      <widget class="QComboBox" name="comboBox_filter_Species">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="font">
+        <font/>
+       </property>
+       <item>
+        <property name="text">
+         <string>All</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Black</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>SmallFlower</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>BigWhite</string>
+        </property>
+       </item>
+      </widget>
+     </item>
+     <item row="1" column="0">
+      <widget class="QComboBox" name="comboBox_filter_TradeType">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="font">
+        <font/>
+       </property>
+       <item>
+        <property name="text">
+         <string>All</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Sell</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Buy</string>
+        </property>
+       </item>
+      </widget>
+     </item>
+     <item row="1" column="3">
+      <widget class="QPushButton" name="pushButton_exec_filter">
+       <property name="font">
+        <font/>
+       </property>
+       <property name="text">
+        <string>Filter</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">

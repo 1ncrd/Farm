@@ -20,7 +20,7 @@
       <x>20</x>
       <y>45</y>
       <width>471</width>
-      <height>291</height>
+      <height>340</height>
      </rect>
     </property>
     <property name="sizePolicy">
@@ -70,14 +70,20 @@
     <property name="textElideMode">
      <enum>Qt::ElideMiddle</enum>
     </property>
+    <property name="showGrid">
+     <bool>false</bool>
+    </property>
     <property name="gridStyle">
-     <enum>Qt::SolidLine</enum>
+     <enum>Qt::DotLine</enum>
+    </property>
+    <property name="cornerButtonEnabled">
+     <bool>false</bool>
     </property>
     <property name="rowCount">
-     <number>0</number>
+     <number>2</number>
     </property>
     <property name="columnCount">
-     <number>0</number>
+     <number>2</number>
     </property>
     <attribute name="horizontalHeaderVisible">
      <bool>true</bool>
@@ -100,6 +106,10 @@
     <attribute name="verticalHeaderHighlightSections">
      <bool>true</bool>
     </attribute>
+    <row/>
+    <row/>
+    <column/>
+    <column/>
    </widget>
    <widget class="QLabel" name="label_title">
     <property name="geometry">
@@ -248,7 +258,7 @@
      <x>0</x>
      <y>0</y>
      <width>512</width>
-     <height>22</height>
+     <height>26</height>
     </rect>
    </property>
   </widget>

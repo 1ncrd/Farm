@@ -1,6 +1,8 @@
 #include "BgmPlayer.hpp"
 #include <QDebug>
 
+extern BGMPlayer * BGM_player = new BGMPlayer;
+
 const int BGMPlayer::VolumeMax = 100;
 BGMPlayer::BGMPlayer(QObject *parent)
     : QObject{parent}
@@ -25,6 +27,7 @@ void BGMPlayer::SetVolume(const int &volume_temp)
 
     this -> volume = volume_temp;
     output -> setVolume(volume / 100.0);
+    qDebug() << output -> volume();
 }
 
 BGMPlayer::~BGMPlayer()

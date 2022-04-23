@@ -7,7 +7,7 @@
 
 FileManager * file_manager = new FileManager;
 
-const bool FileManager::WriteEnable = false;
+const bool FileManager::WriteEnable = true;
 const QString FileManager::GameDataFolderPath = "./GameData/";
 const QString FileManager::SaleRecordFolderPath = "./TradeRecord/";
 FileManager::FileManager(QObject *parent)
@@ -16,9 +16,9 @@ FileManager::FileManager(QObject *parent)
 
 }
 
-std::map<int, QString> FileManager::EnumToTradeTypeName =
+std::map<FileManager::TradeType, QString> FileManager::EnumToTradeTypeName =
 {
-    {0, QString("Sell")}, {1, QString("Buy")},
+    {FileManager::Sell, QString("Sell")}, {FileManager::Buy, QString("Buy")},
 };
 
 void FileManager::CreateTradeRecordFolder()
@@ -132,6 +132,7 @@ void FileManager::ReadTradeRecord(QVector<TradeRecord> * result_qvector, const Q
     }
 
     temp_file.close();
+    emit ReadTradeRecordCompleted();
 }
 
 void FileManager::ClearRecordFile(const QString &file_name)
@@ -139,4 +140,19 @@ void FileManager::ClearRecordFile(const QString &file_name)
     QFile temp_file(SaleRecordFolderPath + file_name);
     temp_file.open(QFile::WriteOnly | QFile::Truncate);
     temp_file.close();
+}
+
+bool FileManager::CheckFileIsEmpty(const QString &file_name)
+{
+    QFile temp_file(SaleRecordFolderPath + file_name);
+    temp_file.open(QFile::ReadOnly);
+
+    if (temp_file.atEnd())
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
 }

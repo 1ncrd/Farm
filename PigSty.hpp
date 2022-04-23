@@ -12,12 +12,12 @@ class PigSty : public QObject
 {
 
     Q_OBJECT
-private:
-    QReadWriteLock rwlock;
-    Pig * ptr_pig_head;
-    int pig_amount;
-    QString id;
 public:
+    static const int PigAmountMax = 10; // For the `quarantine_sty`, the pig amount have no limit.
+    static long money;
+    static int InfectionTransRateInSty;
+    static int InfectionTransRateAcrossSty;
+
     struct PigSoldAmount
     {
         int total = 0;
@@ -25,25 +25,20 @@ public:
         int SmallFlowerPig = 0;
         int BigWhitePig = 0;
     };
-    static const int PigAmountMax = 10;
-    struct PigStyData
-    {
-        // C++11 standard allows setting defaults.
-        // The struct of the return data when query the pig sty information.
-        QString pig_id[PigAmountMax] = {QString("")};
-        Pig::PigSpecies pig_species[PigAmountMax] = {Pig::PigSpecies(0)};
-        float pig_weight[PigAmountMax] = {0};
-        int pig_age[PigAmountMax] = {0};
-        int pig_amount = 0;
-    };
-    static long money;
-    static PigSoldAmount pig_sold_amount;
 
+    static PigSoldAmount pig_sold_amount;
+protected:
+    Pig * ptr_pig_head;
+    int pig_amount;
+    QString id;
+public:
     explicit PigSty(const QString &sty_id_temp, QObject *parent = nullptr);
     ~PigSty();
 
     void AddRandomPig();
     void AddPig(int number = 1);
+    // For the `quarantine_sty`.
+    void AppendPig(Pig * const &ptr_pig_head_to_append);
     void SellPig();
     void CountSoldPig(Pig * const &ptr_pig_to_count) const;
     void RecordTrade(const FileManager::TradeType &type, Pig * const &ptr_pig_to_record) const;
@@ -51,19 +46,22 @@ public:
     void DeleteAllPigs();
     void LetAllPigGrow();
     void InfectOnePig();
-    int Random() const;
+    void InfectionSpreadInSty();
+    void InfectionSpreadFromOthers();
+    bool InfectionExists();
+    Pig * ExtractInfectedPigs();
+    void ExtractPig(Pig * pig_middle);
     int GetPigAmount() const;
-
     void GetStyData();
+    bool CheckStyIsInfected();
     QString GetID() const;
     enum StySpeciesSituation {NoPig, BlackPigExistence, BlackPigNonexistence};
     StySpeciesSituation CheckStySpeciesSituation() const;
 
-
 signals:
     ReturnStyData(QVector<Pig::PigInfo> data);
+    ReturnIsInfected(bool is_infected);
     SellPigFinished();
-    InfectionSpread(const int &id);
 };
 
 #endif // PIGSTY_H

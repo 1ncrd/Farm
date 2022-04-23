@@ -17,6 +17,8 @@ class Sty_Detail_Window : public QMainWindow
 private:
     Ui::StyDetailWindow *ui;
 public:
+    static const int WindowWidth;
+    static const int WindowHeight;
 
     explicit Sty_Detail_Window(QWidget *parent = nullptr);
     ~Sty_Detail_Window();

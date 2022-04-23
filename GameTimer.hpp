@@ -12,8 +12,6 @@ private:
     QTimer * timer;
     long total_time;    // Record the total time of the game.
     static const int DayInterval;
-    float InfectionPosibility;
-
 public:
     explicit GameTimer(QObject *parent = nullptr);
 
@@ -26,7 +24,6 @@ public:
         int year = 0;
     };
     static Date ConvertToDate(int day);
-    void SetInfectionPosibility(const float &posibility);
     int Random();
 signals:
     Timeout_3Month();

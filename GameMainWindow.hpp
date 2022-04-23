@@ -3,12 +3,12 @@
 
 #include <QMainWindow>
 #include <QScrollArea>
+#include <QThread>
 #include "GameTimer.hpp"
 #include "PushButtonToSty.hpp"
-#include "PigSty.hpp"
 #include "PigStyManager.hpp"
 #include "StyDetailWindow.hpp"
-#include <QThread>
+#include "QuarantineStyWindow.hpp"
 #include "TradeRecordWindow.hpp"
 
 namespace Ui
@@ -30,12 +30,16 @@ private:
     QLabel * label_date;
     QLabel * label_money;
     QLabel * label_pig_sold_amount;
+    QLabel * label_infection_status;
     QScrollArea * scroll_area_choose_sty;
     QWidget * area_choose_sty;
-    PushButtonToSty * ptr_btn_entersty[PigStyManager::PigStyAmount];
+    PushButtonToSty * button_show_normal_sty[PigStyManager::PigStyAmount];
     TradeRecordWindow * trade_record_window;
-    QPushButton * button_to_trade_record_window;
-    Sty_Detail_Window * sty_window;
+    Sty_Detail_Window * sty_detail_window;
+    QuarantineStyWindow * quarantine_sty_window;
+    QPushButton * button_show_trade_record_window;
+    QPushButton * button_quarantine_pig;
+    QPushButton * button_show_quarantine_sty;
 
     // `thread_to_process` to deal with computing tasks.
     QThread * thread_to_process;
@@ -46,16 +50,23 @@ public:
     void Create_label_date();
     void Create_label_money();
     void Create_label_pig_sold_amount();
-    void Create_area_choose_sty();
-    void Create_sty_window();
+    void Create_label_infection_status();
+    void Create_area_choose_sty_with_btn();
+    void Create_sty_detail_window();
     void Create_trade_record_window();
-    void Create_button_to_trade_record_window();
+    void Create_button_show_trade_record_window();
+    void Create_button_quarantine_pig();
+    void Create_button_show_quarantine_sty();
+    void Create_quarantine_sty_window();
 
     void Connect_label_date();
     void Connect_label_money();
     void Connect_label_pig_sold_amount();
-    void Connect_sty_window();
-    void Connect_trade_record_window();
+    void Connect_label_infection_status();
+    void Connect_button_to_Sty_Detail();
+    void Connect_button_show_trade_record_window();
+    void Connect_button_quarantine_pig();
+    void Connect_button_show_quarantine_sty();
 
     void Sty_Detail_Window_PreLoad();
 signals:

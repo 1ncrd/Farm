@@ -24,5 +24,5 @@ public:
 signals:
 
 };
-
+extern BGMPlayer * BGM_player;
 #endif // BGMPLAYER_H

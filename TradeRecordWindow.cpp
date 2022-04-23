@@ -1,9 +1,9 @@
 #include "TradeRecordWindow.hpp"
 #include "ui_traderecordwindow.h"
-#include "GameMainWindow.hpp"
 #include <QLabel>
+#include <QMessageBox>
 #include <QTableWidgetItem>
-#include "FileManager.hpp"
+#include "GameMainWindow.hpp"
 #include "Pig.hpp"
 
 TradeRecordWindow::TradeRecordWindow(QWidget *parent) :
@@ -22,10 +22,16 @@ TradeRecordWindow::TradeRecordWindow(QWidget *parent) :
     this -> SetTitle();
     this -> SetTableRecord();
     this -> SetTableHeader();
+    this -> ConfigueFilter();
+
+    this -> result_qvector = new QVector<FileManager::TradeRecord>;
+    connect(this, TradeRecordWindow::RequestTradeRecord, file_manager, FileManager::ReadTradeRecord);
+    connect(file_manager, FileManager::ReadTradeRecordCompleted, this, TradeRecordWindow::LoadTableRecord);
 }
 
 TradeRecordWindow::~TradeRecordWindow()
 {
+    delete result_qvector;
     delete ui;
 }
 
@@ -79,19 +85,23 @@ void TradeRecordWindow::SetTableRecord()
 
 void TradeRecordWindow::Start()
 {
-    this -> LoadTableRecord(QString("Record_1.dat"));
-    this -> show();
+    if (FileManager::CheckFileIsEmpty(QString("Record_1.dat")))
+    {
+        QMessageBox::information(this, "Hint", tr("<font face = Minecraft size = 4>There's no record of any transactions</font>"));
+    }
+    else
+    {
+        // this -> LoadTableRecord(QString("Record_1.dat"));
+        result_qvector -> clear();
+        emit RequestTradeRecord(result_qvector, QString("Record_1.dat"));
+    }
 }
 
-void TradeRecordWindow::LoadTableRecord(const QString &file_name)
+void TradeRecordWindow::LoadTableRecord()
 {
     ui -> table_record -> clearContents();
     ui -> table_record -> setRowCount(0);
 
-    QVector<FileManager::TradeRecord> * result_qvector = new QVector<FileManager::TradeRecord>;
-    file_manager -> ReadTradeRecord(result_qvector, file_name);
-
-    // Traverse the `result_qvector`.
     QVector<FileManager::TradeRecord>::iterator iterator_record;
 
     for (iterator_record = result_qvector -> begin(); iterator_record != result_qvector -> end(); iterator_record++)
@@ -119,8 +129,61 @@ void TradeRecordWindow::LoadTableRecord(const QString &file_name)
         ui -> table_record -> setItem(row_count, 5, content_age);
     }
 
-    this -> SetTableHeader();
-    delete result_qvector;
+    this -> show();
+}
+
+void TradeRecordWindow::FilterTableRecord(bool if_filter_type, bool if_filter_species, FileManager::TradeType filter_type, Pig::PigSpecies filter_species)
+{
+    qDebug() << if_filter_type << if_filter_species << filter_type << filter_species;
+    ui -> table_record -> clearContents();
+    ui -> table_record -> setRowCount(0);
+
+    QVector<FileManager::TradeRecord>::iterator iterator_record;
+
+    for (iterator_record = result_qvector -> begin(); iterator_record != result_qvector -> end(); iterator_record++)
+    {
+        if ((!if_filter_type or (if_filter_type and iterator_record -> trade_type == filter_type))
+                and (!if_filter_species or (if_filter_species and iterator_record -> pig_species == filter_species)))
+        {
+            qDebug() << "insert";
+            int row_count = ui -> table_record -> rowCount();
+            ui -> table_record -> insertRow(row_count);
+            QTableWidgetItem * content_time = new QTableWidgetItem(QString::number(iterator_record -> trade_time));
+            QTableWidgetItem * content_type = new QTableWidgetItem(FileManager::EnumToTradeTypeName[iterator_record -> trade_type]);
+            QTableWidgetItem * content_id = new QTableWidgetItem(iterator_record -> pig_id);
+            QTableWidgetItem * content_species = new QTableWidgetItem(Pig::EnumToSpeciesName[iterator_record -> pig_species]);
+            QTableWidgetItem * content_weight = new QTableWidgetItem(QString::number(iterator_record -> pig_weight));
+            QTableWidgetItem * content_age = new QTableWidgetItem(QString::number(iterator_record -> pig_age));
+            content_time -> setTextAlignment(Qt::AlignCenter);
+            content_type -> setTextAlignment(Qt::AlignCenter);
+            content_id -> setTextAlignment(Qt::AlignCenter);
+            content_species -> setTextAlignment(Qt::AlignCenter);
+            content_weight -> setTextAlignment(Qt::AlignCenter);
+            content_age -> setTextAlignment(Qt::AlignCenter);
+            ui -> table_record -> setRowHeight(row_count, 17);
+            ui -> table_record -> setItem(row_count, 0, content_time);
+            ui -> table_record -> setItem(row_count, 1, content_type);
+            ui -> table_record -> setItem(row_count, 2, content_id);
+            ui -> table_record -> setItem(row_count, 3, content_species);
+            ui -> table_record -> setItem(row_count, 4, content_weight);
+            ui -> table_record -> setItem(row_count, 5, content_age);
+        }
+    }
+
+}
+
+void TradeRecordWindow::ConfigueFilter()
+{
+    // Filter the content of the table according to the user's selections.
+    connect(ui -> pushButton_exec_filter, QPushButton::clicked, this, [ = ]()
+    {
+        int filter_type = ui -> comboBox_filter_TradeType -> currentIndex();
+        int filter_species = ui -> comboBox_filter_Species -> currentIndex();
+        qDebug() << "type" << filter_type;
+        qDebug() << "Species" << filter_species;
+        this -> FilterTableRecord(filter_type, filter_species,
+                                  FileManager::TradeType(filter_type - 1), Pig::PigSpecies(filter_species - 1));
+    });
 }
 
 void TradeRecordWindow::closeEvent(QCloseEvent *event)

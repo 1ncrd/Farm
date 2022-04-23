@@ -5,19 +5,26 @@
 
 namespace Ui
 {
-    class SettingsWindow;
+    class SettingWindow;
 }
 
-class SettingsWindow : public QMainWindow
+class SettingWindow : public QMainWindow
 {
     Q_OBJECT
 
 public:
-    explicit SettingsWindow(QWidget *parent = nullptr);
-    ~SettingsWindow();
+    static const int WindowWidth;
+    static const int WindowHeight;
+
+    explicit SettingWindow(QWidget *parent = nullptr);
+    ~SettingWindow();
+    void ConfigueVolumeControl();
 
 private:
-    Ui::SettingsWindow *ui;
+    Ui::SettingWindow *ui;
+
+signals:
+    VolumeChanged(int volume_temp);
 };
 
 #endif // SETTINGWINDOW_H

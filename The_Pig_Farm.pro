@@ -16,10 +16,13 @@ SOURCES += \
     GameMainWindow.cpp \
     GameTimer.cpp \
     HomeWindow.cpp \
+    MyRandom.cpp \
     Pig.cpp \
     PigSty.cpp \
     PigStyManager.cpp \
     PushButtonToSty.cpp \
+    QuarantinePigSty.cpp \
+    QuarantineStyWindow.cpp \
     SettingWindow.cpp \
     StyDetailWindow.cpp \
     TradeRecordWindow.cpp \
@@ -31,10 +34,13 @@ HEADERS += \
     GameMainWindow.hpp \
     GameTimer.hpp \
     HomeWindow.hpp \
+    MyRandom.hpp \
     Pig.hpp \
     PigSty.hpp \
     PigStyManager.hpp \
     PushButtonToSty.hpp \
+    QuarantinePigSty.hpp \
+    QuarantineStyWindow.hpp \
     SettingWindow.hpp \
     StyDetailWindow.hpp \
     TradeRecordWindow.hpp
@@ -42,6 +48,7 @@ HEADERS += \
 FORMS += \
     GameMainWindow.ui \
     HomeWindow.ui \
+    QuarantineStyWindow.ui \
     SettingWindow.ui \
     StyDetailWindow.ui \
     TradeRecordWindow.ui
@@ -53,3 +60,5 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 RESOURCES += \
     Resource.qrc
+
+DISTFILES +=
