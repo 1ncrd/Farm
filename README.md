@@ -14,3 +14,7 @@ This version use only single threads which causes the interface to be a bit slug
 
 The most significant update in this version is that it use multiple threads to separate UI display from data calculation. This greatly improves the interface's smoothness。
 At the same time, it realize a part of function of the display of pig sale records.
+
+## Version 3.0
+
+Add the archive management system. Now the program can read and write the archive.
