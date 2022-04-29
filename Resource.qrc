@@ -1,6 +1,5 @@
 <RCC>
     <qresource prefix="/">
-        <file>Resources/Music/Living Mice.flac</file>
         <file>Resources/Picture/PigFace.png</file>
     </qresource>
 </RCC>

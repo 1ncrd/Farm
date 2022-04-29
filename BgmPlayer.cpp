@@ -1,18 +1,23 @@
 #include "BgmPlayer.hpp"
 #include <QDebug>
 
-extern BGMPlayer * BGM_player = new BGMPlayer;
+BGMPlayer * BGM_player = new BGMPlayer;
 
 const int BGMPlayer::VolumeMax = 100;
 BGMPlayer::BGMPlayer(QObject *parent)
     : QObject{parent}
 {
-    QMediaPlayer * player = new QMediaPlayer(this);
-    QAudioOutput * output = new QAudioOutput(this);
-    player -> setSource(QUrl("qrc:/Music/Living Mice.flac"));
+    player = new QMediaPlayer(this);
+    output = new QAudioOutput(this);
+    player -> setSource(QUrl::fromLocalFile("./Resources/Music/404 not found.flac"));
     player -> setAudioOutput(output);
-    output -> setVolume(0.5);
+    output -> setVolume(0);
     player -> play();
+}
+
+BGMPlayer::~BGMPlayer()
+{
+    qDebug() << "BGM_Player released.";
 }
 
 void BGMPlayer::SetVolume(const int &volume_temp)
@@ -26,11 +31,11 @@ void BGMPlayer::SetVolume(const int &volume_temp)
     }
 
     this -> volume = volume_temp;
-    output -> setVolume(volume / 100.0);
+    output -> setVolume(float(volume / 100.0));
     qDebug() << output -> volume();
 }
 
-BGMPlayer::~BGMPlayer()
+int BGMPlayer::GetVolume()
 {
-    qDebug() << "BGM_Player released.";
+    return int((output -> volume()) * 100);
 }

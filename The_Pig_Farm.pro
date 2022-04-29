@@ -11,13 +11,19 @@ CONFIG += force_debug_info
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    ArchiveItem.cpp \
+    ArchiveWindow.cpp \
     BgmPlayer.cpp \
+    CreateWindow.cpp \
     FileManager.cpp \
     GameMainWindow.cpp \
     GameTimer.cpp \
     HomeWindow.cpp \
+    MyListWidget.cpp \
+    MyPushButton.cpp \
     MyRandom.cpp \
     Pig.cpp \
+    PigSoldAmount.cpp \
     PigSty.cpp \
     PigStyManager.cpp \
     PushButtonToSty.cpp \
@@ -29,13 +35,19 @@ SOURCES += \
     main.cpp
 
 HEADERS += \
+    ArchiveItem.hpp \
+    ArchiveWindow.hpp \
     BgmPlayer.hpp \
+    CreateWindow.hpp \
     FileManager.hpp \
     GameMainWindow.hpp \
     GameTimer.hpp \
     HomeWindow.hpp \
+    MyListWidget.hpp \
+    MyPushButton.hpp \
     MyRandom.hpp \
     Pig.hpp \
+    PigSoldAmount.hpp \
     PigSty.hpp \
     PigStyManager.hpp \
     PushButtonToSty.hpp \
@@ -46,6 +58,9 @@ HEADERS += \
     TradeRecordWindow.hpp
 
 FORMS += \
+    ArchiveItem.ui \
+    ArchiveWindow.ui \
+    CreateWindow.ui \
     GameMainWindow.ui \
     HomeWindow.ui \
     QuarantineStyWindow.ui \

@@ -117,6 +117,9 @@
     <column/>
    </widget>
    <widget class="QTableWidget" name="table_header">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
     <property name="geometry">
      <rect>
       <x>10</x>
@@ -124,6 +127,17 @@
       <width>474</width>
       <height>25</height>
      </rect>
+    </property>
+    <property name="sizePolicy">
+     <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+      <horstretch>0</horstretch>
+      <verstretch>0</verstretch>
+     </sizepolicy>
+    </property>
+    <property name="font">
+     <font>
+      <family>Minecraft</family>
+     </font>
     </property>
     <property name="focusPolicy">
      <enum>Qt::NoFocus</enum>
@@ -133,6 +147,9 @@
     </property>
     <property name="frameShadow">
      <enum>QFrame::Plain</enum>
+    </property>
+    <property name="midLineWidth">
+     <number>0</number>
     </property>
     <property name="verticalScrollBarPolicy">
      <enum>Qt::ScrollBarAlwaysOff</enum>
@@ -158,6 +175,9 @@
     <property name="selectionMode">
      <enum>QAbstractItemView::NoSelection</enum>
     </property>
+    <property name="showGrid">
+     <bool>true</bool>
+    </property>
     <property name="gridStyle">
      <enum>Qt::NoPen</enum>
     </property>
@@ -174,7 +194,7 @@
      <number>0</number>
     </attribute>
     <attribute name="horizontalHeaderDefaultSectionSize">
-     <number>82</number>
+     <number>30</number>
     </attribute>
     <attribute name="horizontalHeaderStretchLastSection">
      <bool>false</bool>
@@ -198,7 +218,15 @@
     <column/>
     <column/>
     <column/>
+    <item row="0" column="0">
+     <property name="text">
+      <string/>
+     </property>
+    </item>
     <item row="0" column="1">
+     <property name="text">
+      <string/>
+     </property>
      <property name="flags">
       <set>NoItemFlags</set>
      </property>
@@ -294,7 +322,7 @@
      <x>0</x>
      <y>0</y>
      <width>512</width>
-     <height>22</height>
+     <height>26</height>
     </rect>
    </property>
   </widget>

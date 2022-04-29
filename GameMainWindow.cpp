@@ -3,10 +3,16 @@
 #include <QDebug>
 #include <QScrollBar>
 #include <QLabel>
+#include <QMessageBox>
 #include "BgmPlayer.hpp"
 
 const int GameMainWindow::WindowWidth = 1024;
 const int GameMainWindow::WindowHeight = 576;
+
+std::map<int, int> GameMainWindow::DifficultyToInfectionPercent =
+{
+    {0, 1}, {1, 3}, {2, 10}
+};
 
 GameMainWindow::GameMainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -18,19 +24,6 @@ GameMainWindow::GameMainWindow(QWidget *parent) :
     this -> setWindowTitle("The Pig Farm");
     this -> setWindowIcon(QIcon(":/Resources/Picture/PigFace.png"));
 
-    // *********************************************************************
-    // The task about data processing would be put into `thread_to_process`.
-    // The main thread should only process the task about UI display
-    // to avoid interface lag.
-    // *********************************************************************
-
-    // Start `thread_to_process`.
-    this -> thread_to_process = new QThread;
-    this -> thread_to_process -> start();
-    this -> thread_to_process -> setPriority(QThread::TimeCriticalPriority);
-
-    file_manager -> moveToThread(thread_to_process);
-    pig_sty_manager -> moveToThread(thread_to_process);
 
     // ***************************************************************************
     // Create first and then connect them to enssure the object to connect exists.
@@ -60,15 +53,13 @@ GameMainWindow::GameMainWindow(QWidget *parent) :
 
     // Without the "Sty_Detail_Window_PreLoad()",
     // there will be a bit of lag to show the `sty_window` when the user clicks the pushbutton_entersty first time for some unknown reason.
+    this -> ConfigueArchiveStore();
 }
 
 GameMainWindow::~GameMainWindow()
 {
-    // Release the `thread_to_process` safely.
-    this -> thread_to_process -> quit();
-    this -> thread_to_process -> wait();
-    this -> thread_to_process -> deleteLater();
-
+    // Stand for the game finished.
+    PigSty::DeleteInstance();
     delete pig_sty_manager;
     delete file_manager;
     delete game_timer;
@@ -76,15 +67,32 @@ GameMainWindow::~GameMainWindow()
     delete ui;
 }
 
-void GameMainWindow::StartGame()
+void GameMainWindow::StartGame(QString file_name)
 {
     // Start the game.
-    pig_sty_manager -> StartTheFarm();
-    this -> Sty_Detail_Window_PreLoad();
-    pig_sty_manager -> SetInfectionPosibility(50);
+    FileManager::GameData game_data = file_manager -> ReadArchiveData(file_name);
+
+    difficulty = game_data.difficulty;
+    archive_name = game_data.name;
+    pig_sty_manager -> SetArchiveName(game_data.name);
+    file_manager -> SetCurrentArchiveName(game_data.name);
+
+    if (game_data.never_be_edited)
+    {
+        pig_sty_manager -> StartTheFarm();
+        this -> Sty_Detail_Window_PreLoad();
+        pig_sty_manager -> SetInfectionPosibility(DifficultyToInfectionPercent[game_data.difficulty]);
+    }
+    else
+    {
+        game_timer -> SetTime(game_data.total_time);
+        pig_sty_manager -> StartTheFarm(game_data);
+        this -> Sty_Detail_Window_PreLoad();
+        pig_sty_manager -> SetInfectionPosibility(DifficultyToInfectionPercent[game_data.difficulty]);
+    }
+
     game_timer -> start();
     this -> show();
-
 }
 
 void GameMainWindow::Create_label_date()
@@ -225,17 +233,19 @@ void GameMainWindow::Create_quarantine_sty_window()
 
 void GameMainWindow::Connect_label_date()
 {
-    connect(game_timer, GameTimer::timeout, this, [ = ]()
+    auto UpdateDisplay = [ = ]()
     {
         label_date -> setText(QString("Day:\t") + QString::number(game_timer -> GetTime()));
         label_date -> adjustSize();
-    });
+    };
+    connect(game_timer, GameTimer::timeout, this, UpdateDisplay);
+    connect(game_timer, GameTimer::TimeUpdate, this, UpdateDisplay);
 }
 
 void GameMainWindow::Connect_label_money()
 {
     // Update the `label_money` after the last `pig_sty` finished the sale.
-    connect(pig_sty_manager, PigStyManager::SellPigFinished, this, [ = ]()
+    connect(PigSty::GetInstance(), PigSty::MoneyUpdate, this, [ = ]()
     {
         label_money -> setText(QString("Money:\t") + QString::number(PigSty::money));
         label_money -> adjustSize();
@@ -245,7 +255,7 @@ void GameMainWindow::Connect_label_money()
 void GameMainWindow::Connect_label_pig_sold_amount()
 {
     // Update the `label_pig_sold_amount` after the last `pig_sty` finished the sale.
-    connect(pig_sty_manager, PigStyManager::SellPigFinished, this, [ = ]()
+    connect(PigSty::GetInstance(), PigSty::SoldAmountUpdate, this, [ = ]()
     {
         label_pig_sold_amount -> setText(QString("Amount of pig sold:") +
                                          QString("\n\nBlackPig:\t\t") + QString::number(PigSty::pig_sold_amount.BlackPig) +
@@ -327,4 +337,50 @@ void GameMainWindow::Connect_button_show_quarantine_sty()
 void GameMainWindow::Sty_Detail_Window_PreLoad()
 {
     sty_detail_window -> Preload(99);
+}
+
+void GameMainWindow::ConfigueArchiveStore()
+{
+
+}
+
+void GameMainWindow::StoreGameData()
+{
+    FileManager::GameData game_data;
+    game_data.difficulty = difficulty;
+    QDateTime current_date_time = QDateTime::currentDateTime();
+    game_data.edit_time = current_date_time.toString("yyyy.MM.dd hh:mm:ss ddd");
+    game_data.name = archive_name;
+    game_data.never_be_edited = false;
+    game_data.total_time = game_timer -> GetTime();
+    game_data.pigsty_info.money = PigSty::money;
+    game_data.pigsty_info.pig_sold_amount.BlackPig = PigSty::pig_sold_amount.BlackPig;
+    game_data.pigsty_info.pig_sold_amount.SmallFlowerPig = PigSty::pig_sold_amount.SmallFlowerPig;
+    game_data.pigsty_info.pig_sold_amount.BigWhitePig = PigSty::pig_sold_amount.BigWhitePig;
+    game_data.pigsty_info.pig_sold_amount.total = PigSty::pig_sold_amount.total;
+    game_data.pig_data = pig_sty_manager -> GetAllPigData();
+    FileManager::WriteArchiveData(game_data, game_data.name);
+}
+
+void GameMainWindow::closeEvent(QCloseEvent *event)
+{
+    auto choose = QMessageBox::question(this, tr("Quit"),
+                                        QString(tr("Save the archive?")),
+                                        QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel,
+                                        QMessageBox::Save);
+
+    if (choose == QMessageBox::Cancel)
+    {
+        event -> ignore();
+    }
+    else if (choose == QMessageBox::Save)
+    {
+        StoreGameData();
+        event -> accept();
+    }
+    else if (choose == QMessageBox::Discard)
+    {
+        event -> accept();
+    }
+
 }

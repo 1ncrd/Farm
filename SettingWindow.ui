@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>SettingsWindow</class>
- <widget class="QMainWindow" name="SettingsWindow">
+ <class>SettingWindow</class>
+ <widget class="QMainWindow" name="SettingWindow">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -28,12 +28,14 @@
       <widget class="QLabel" name="label_volume">
        <property name="font">
         <font>
-         <family>Minecraft</family>
          <pointsize>12</pointsize>
         </font>
        </property>
        <property name="text">
         <string>Volume</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
        </property>
       </widget>
      </item>
@@ -53,18 +55,20 @@
       <widget class="QLabel" name="label_volume_value">
        <property name="minimumSize">
         <size>
-         <width>20</width>
+         <width>40</width>
          <height>0</height>
         </size>
        </property>
        <property name="font">
         <font>
-         <family>Minecraft</family>
          <pointsize>12</pointsize>
         </font>
        </property>
        <property name="text">
         <string>0</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
        </property>
       </widget>
      </item>
@@ -99,7 +103,7 @@
      <x>0</x>
      <y>0</y>
      <width>512</width>
-     <height>22</height>
+     <height>26</height>
     </rect>
    </property>
   </widget>

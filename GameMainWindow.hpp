@@ -23,6 +23,9 @@ class GameMainWindow : public QMainWindow
 public:
     static const int WindowWidth;
     static const int WindowHeight;
+    static std::map<int, int> DifficultyToInfectionPercent;
+    int difficulty;
+    QString archive_name;
 private:
     Ui::GameMainWindow * ui;
 
@@ -42,11 +45,10 @@ private:
     QPushButton * button_show_quarantine_sty;
 
     // `thread_to_process` to deal with computing tasks.
-    QThread * thread_to_process;
 public:
     explicit GameMainWindow(QWidget *parent = nullptr);
     ~GameMainWindow();
-    void StartGame();
+    void StartGame(QString file_name);
     void Create_label_date();
     void Create_label_money();
     void Create_label_pig_sold_amount();
@@ -69,6 +71,9 @@ public:
     void Connect_button_show_quarantine_sty();
 
     void Sty_Detail_Window_PreLoad();
+    void ConfigueArchiveStore();
+    void StoreGameData();
+    void closeEvent(QCloseEvent *event);
 signals:
     Pig_Sty_LetAllPigGrow();
     Pig_Sty_SellPig();

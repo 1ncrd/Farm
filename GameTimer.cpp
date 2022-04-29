@@ -4,7 +4,7 @@
 
 GameTimer *game_timer = new GameTimer;
 
-const int GameTimer::DayInterval = 1000;
+const int GameTimer::DayInterval = 1000;    // millisecond(s).
 GameTimer::GameTimer(QObject *parent)
     : QTimer{parent}
 {
@@ -35,12 +35,8 @@ GameTimer::Date GameTimer::ConvertToDate(int day)
     return date_temp;
 }
 
-int GameTimer::Random()
+void GameTimer::SetTime(long time)
 {
-    static unsigned int offset = 0;
-    srand(time(0));
-    offset = offset + rand() * rand();
-    srand(offset);
-
-    return rand();
+    this -> total_time = time;
+    emit TimeUpdate();
 }

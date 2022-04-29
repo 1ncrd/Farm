@@ -21,16 +21,19 @@ public:
         float weight;
         PigSpecies species;
         bool is_infected;
+        int infected_time;
+        bool is_quarantined;
     };
 private:
     QString birthday;           // birthday = current game time
     QString in_sty_id;          // 0 ~ 99
-    QString id;                 // sty_id + birthday / 30. I didn't use the 0~9 because it looks a little bit strange.
+    QString id;                 // sty_id + birthday / 30 + order. I didn't use the 0~9 because it looks a little bit strange.
     int age;                    // day
     volatile float weight;      // kg
     PigSpecies species;
     bool is_infected;
     int infected_time;
+    bool is_quarantined;
 
     Pig * next_pig;
     Pig * previous_pig;
@@ -39,7 +42,12 @@ public:
     friend class QuarantinePigSty;
 
     explicit Pig(const QString &sty_id_temp, const int &order, const int &blackpig_allowed);
+    explicit Pig(const QString &id, const int &age, const float &weight, const PigSpecies &species,
+                 const bool &is_infected, const int &infected_time, const bool &is_quarantined);
+    explicit Pig(const PigInfo &pig_info);
     ~Pig();
+    QString GetStyID();
+    PigInfo GetPigInfo();
 
     QString PigIDGenerator(const int &order);
 

@@ -12,7 +12,7 @@ class BGMPlayer : public QObject
     Q_OBJECT
 
 private:
-    unsigned short volume;  // Ranges from 0 to 100
+    int volume;  // Ranges from 0 to 100
     QMediaPlayer * player;
     QAudioOutput * output;
 public:
@@ -20,7 +20,7 @@ public:
     BGMPlayer(QObject *parent = nullptr);
     ~BGMPlayer();
     void SetVolume(const int &volume_temp);
-
+    int GetVolume();
 signals:
 
 };

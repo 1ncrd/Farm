@@ -23,8 +23,16 @@ public:
     static const int WindowHeight;
     static const QString VertionNumber;
 
+    static const QString message_guidance;
+    static const QString message_about;
     HomeWindow(QWidget *parent = nullptr);
     ~HomeWindow();
+    void ConfigueUI();
+    void Configue_pushButton_start_game();
+    void Configue_pushButton_setting();
+    void Configue_pushButton_quit();
+    void Configue_pushButton_introduction();
+    void Configue_pushButton_about();
 
 signals:
     OnStartButtonClicked();

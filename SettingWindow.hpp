@@ -19,7 +19,8 @@ public:
     explicit SettingWindow(QWidget *parent = nullptr);
     ~SettingWindow();
     void ConfigueVolumeControl();
-
+    void SetVolume(const int &volume);
+    void Start();
 private:
     Ui::SettingWindow *ui;
 
@@ -28,6 +29,3 @@ signals:
 };
 
 #endif // SETTINGWINDOW_H
-// TODO set volume;
-// TODO auther information;
-// TODO set update_enable;

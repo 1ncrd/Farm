@@ -4,9 +4,17 @@
 #include "MyRandom.hpp"
 
 long PigSty::money = 0;
-PigSty::PigSoldAmount PigSty::pig_sold_amount;
+PigSoldAmount PigSty::pig_sold_amount;
 int PigSty::InfectionTransRateInSty = 50;
 int PigSty::InfectionTransRateAcrossSty = 15;
+PigSty * PigSty::temp_instance = new PigSty;
+QString PigSty::ArchiveName;
+
+PigSty::PigSty(QObject *parent)
+    : QObject{parent}
+{
+    this -> ptr_pig_head = nullptr;
+}
 
 PigSty::PigSty(const QString &sty_id_temp, QObject *parent)
     : QObject{parent}
@@ -90,6 +98,14 @@ void PigSty::AppendPig(Pig * const &ptr_pig_to_append_head)
 
         ptr_pig_current -> next_pig = ptr_pig_to_append_head;
         ptr_pig_to_append_head -> previous_pig = ptr_pig_current;
+
+        auto ptr_to_count = ptr_pig_to_append_head;
+
+        while (ptr_to_count != nullptr)
+        {
+            ptr_to_count = ptr_to_count -> next_pig;
+            pig_amount++;
+        }
     }
 }
 
@@ -117,8 +133,8 @@ void PigSty::SellPig()
         if (ptr_pig_current -> weight > 75 or ptr_pig_current -> age > 365)
         {
             assert(ptr_pig_current != nullptr);
-            money += Pig::SpeciesPrice[ptr_pig_current->species];
-            CountSoldPig(ptr_pig_current);
+            AddMoney(Pig::SpeciesPrice[ptr_pig_current->species]);
+            AddSoldAmountPig(ptr_pig_current -> species);
             RecordTrade(FileManager::Sell, ptr_pig_current);
             DeletePig(ptr_pig_current);
         }
@@ -130,7 +146,8 @@ void PigSty::SellPig()
     if (ptr_pig_current -> weight > 75 or ptr_pig_current -> age > 365)
     {
         assert(ptr_pig_current != nullptr);
-        money += Pig::SpeciesPrice[ptr_pig_current->species];
+        AddMoney(Pig::SpeciesPrice[ptr_pig_current->species]);
+        AddSoldAmountPig(ptr_pig_current -> species);
         RecordTrade(FileManager::Sell, ptr_pig_current);
         DeletePig(ptr_pig_current);
     }
@@ -141,25 +158,7 @@ void PigSty::SellPig()
     }
 
 }
-void PigSty::CountSoldPig(Pig * const &ptr_pig_to_count) const
-{
-    pig_sold_amount.total++;
 
-    switch (ptr_pig_to_count -> species)
-    {
-        case Pig::BlackPig:
-            pig_sold_amount.BlackPig++;
-            break;
-
-        case Pig::SmallFlowerPig:
-            pig_sold_amount.SmallFlowerPig++;
-            break;
-
-        case Pig::BigWhitePig:
-            pig_sold_amount.BigWhitePig++;
-            break;
-    }
-}
 void PigSty::RecordTrade(const FileManager::TradeType &type, Pig * const &ptr_pig_to_record) const
 {
     FileManager::TradeRecord sale_record_temp;
@@ -169,7 +168,7 @@ void PigSty::RecordTrade(const FileManager::TradeType &type, Pig * const &ptr_pi
     sale_record_temp.pig_species = ptr_pig_to_record -> species;
     sale_record_temp.pig_weight = ptr_pig_to_record -> weight;
     sale_record_temp.pig_age = ptr_pig_to_record -> age;
-    FileManager::WriteTradeRecord(sale_record_temp, "Record_1.dat");
+    FileManager::WriteTradeRecord(sale_record_temp, ArchiveName);
 }
 
 void PigSty::DeletePig(Pig * const &ptr_pig_to_delete)
@@ -335,6 +334,7 @@ Pig * PigSty::ExtractInfectedPigs()
                 result_pig_head = ptr_pig_current;
                 result_pig_head -> previous_pig = nullptr;
                 result_pig_head -> next_pig = nullptr;
+                result_pig_head -> is_quarantined = true;
                 result_pig_current = result_pig_head;
             }
             else
@@ -344,6 +344,7 @@ Pig * PigSty::ExtractInfectedPigs()
                 result_pig_current -> next_pig -> previous_pig = result_pig_current;
                 result_pig_current = result_pig_current -> next_pig;
                 result_pig_current -> next_pig = nullptr;
+                result_pig_current -> is_quarantined = true;
             }
         }
 
@@ -359,6 +360,7 @@ Pig * PigSty::ExtractInfectedPigs()
             result_pig_head = ptr_pig_current;
             result_pig_head -> previous_pig = nullptr;
             result_pig_head -> next_pig = nullptr;
+            result_pig_head -> is_quarantined = true;
             result_pig_current = result_pig_head;
         }
         else
@@ -368,7 +370,7 @@ Pig * PigSty::ExtractInfectedPigs()
             result_pig_current -> next_pig -> previous_pig = result_pig_current;
             result_pig_current -> next_pig -> next_pig = nullptr;
             result_pig_current = result_pig_current -> next_pig;
-
+            result_pig_current -> is_quarantined = true;
         }
     }
 
@@ -455,6 +457,42 @@ void PigSty::GetStyData()
     return;
 }
 
+QVector<Pig::PigInfo> PigSty::GetAllPigData()
+{
+    QVector<Pig::PigInfo> result;
+    bool infection_exists = false;
+
+    if (ptr_pig_head == nullptr)
+    {
+        return result;
+    }
+
+    Pig * ptr_pig_current = ptr_pig_head;
+
+    while (ptr_pig_current != nullptr)
+    {
+        Pig::PigInfo pig_info;
+        pig_info.id = ptr_pig_current-> id;
+        pig_info.species = ptr_pig_current-> species;
+        pig_info.weight = ptr_pig_current-> weight;
+        pig_info.age = ptr_pig_current-> age;
+        pig_info.is_infected = ptr_pig_current -> is_infected;
+        pig_info.is_quarantined = ptr_pig_current -> is_quarantined;
+        pig_info.infected_time = ptr_pig_current -> infected_time;
+
+        if (pig_info.is_infected)
+        {
+            infection_exists = true;
+        }
+
+        result.append(pig_info);
+
+        ptr_pig_current = ptr_pig_current -> next_pig;
+    }
+
+    return result;
+}
+
 bool PigSty::CheckStyIsInfected()
 {
     bool is_infected = false;
@@ -522,4 +560,63 @@ void PigSty::DeleteAllPigs()
 
     delete ptr_pig_current;
     ptr_pig_head = nullptr;
+}
+
+void PigSty::SetSoldAmount(const PigSoldAmount &amount)
+{
+    pig_sold_amount.BlackPig = amount.BlackPig;
+    pig_sold_amount.SmallFlowerPig = amount.SmallFlowerPig;
+    pig_sold_amount.BigWhitePig = amount.BigWhitePig;
+    pig_sold_amount.total = amount.total;
+
+    emit GetInstance() -> SoldAmountUpdate();
+}
+
+void PigSty::AddSoldAmountPig(const Pig::PigSpecies &species, const int &amount/* = 1*/)
+{
+    switch (species)
+    {
+        case Pig::BlackPig:
+            pig_sold_amount.BlackPig += amount;
+            break;
+
+        case Pig::SmallFlowerPig:
+            pig_sold_amount.SmallFlowerPig += amount;
+            break;
+
+        case Pig::BigWhitePig:
+            pig_sold_amount.BigWhitePig += amount;
+            break;
+    }
+
+    pig_sold_amount.total += amount;
+    emit GetInstance() -> SoldAmountUpdate();
+}
+
+void PigSty::SetMoney(const int &amount)
+{
+    money = amount;
+    emit GetInstance() -> MoneyUpdate();
+}
+
+void PigSty::AddMoney(const int &amount)
+{
+    money += amount;
+    emit GetInstance() -> MoneyUpdate();
+}
+
+PigSty * PigSty::GetInstance()
+{
+    return temp_instance;
+}
+
+void PigSty::DeleteInstance()
+{
+    delete temp_instance;
+    temp_instance = nullptr;
+}
+
+void PigSty::SetArchiveName(const QString &name)
+{
+    ArchiveName = name;
 }

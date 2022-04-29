@@ -15,6 +15,7 @@ public:
     static const int PigStyPerColumn;
     static const QString QuarantineStyID;
     static const int QuarantineStyID_int;
+    static QString ArchiveName;
 private:
     PigSty * pig_sty[PigStyAmount];
     QuarantinePigSty * quarantine_sty;
@@ -26,9 +27,14 @@ public:
     void GetStyData(const int &sty_num);
     void GetQuarantineStyData();
     void StartTheFarm();
+    void StartTheFarm(const FileManager::GameData &game_data);
+    void ConfigueFunc();
+    QVector<Pig::PigInfo> GetAllPigData();
     void InfectionSpreadAcrossSty();
     void SetInfectionPosibility(const float &posibility);
     void DisposeQuarantineSty();
+    void SendInfectionInfo();
+    void SetArchiveName(const QString &name);
 signals:
     InfectionOccur();
     SellPigFinished();

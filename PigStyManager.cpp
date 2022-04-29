@@ -10,6 +10,7 @@ const int PigStyManager::PigStyPerRow = 10;
 const int PigStyManager::PigStyPerColumn = 10;
 const QString PigStyManager::QuarantineStyID("-1");
 const int PigStyManager::QuarantineStyID_int = -1;
+QString PigStyManager::ArchiveName;
 
 PigStyManager::PigStyManager(QObject * parent)
     : QObject{parent}
@@ -21,6 +22,7 @@ PigStyManager::PigStyManager(QObject * parent)
     }
 
     quarantine_sty = nullptr;
+
 }
 
 PigStyManager::~PigStyManager()
@@ -44,6 +46,55 @@ void PigStyManager::StartTheFarm()
 
     // Create a `quarantine_sty` to manage the infected pig;
     quarantine_sty = new QuarantinePigSty(QuarantineStyID);
+
+    this -> ConfigueFunc();
+}
+
+void PigStyManager::StartTheFarm(const FileManager::GameData &game_data)
+{
+    PigSty::SetSoldAmount(game_data.pigsty_info.pig_sold_amount);
+    PigSty::money = game_data.pigsty_info.money;
+
+    for (int i = 0; i < PigStyAmount; i++)
+    {
+        pig_sty[i] = new PigSty(QString::number(i));
+    }
+
+    // Create a `quarantine_sty` to manage the infected pig;
+    quarantine_sty = new QuarantinePigSty(QuarantineStyID);
+
+    for (QVector<Pig::PigInfo>::const_iterator iter = game_data.pig_data.begin(); iter != game_data.pig_data.end(); iter++)
+    {
+        Pig * pig = new Pig(*iter);
+
+        if (iter -> is_quarantined)
+        {
+            quarantine_sty -> AppendPig(pig);
+        }
+        else
+        {
+            pig_sty[pig -> GetStyID().toInt()] -> AppendPig(pig);
+        }
+    }
+
+    this -> ConfigueFunc();
+}
+
+QVector<Pig::PigInfo> PigStyManager::GetAllPigData()
+{
+    QVector<Pig::PigInfo> result;
+
+    for (int i = 0; i < PigStyAmount; i++)
+    {
+        result.append(pig_sty[i] -> GetAllPigData());
+    }
+
+    result.append(quarantine_sty -> GetAllPigData());
+    return result;
+}
+
+void PigStyManager::ConfigueFunc()
+{
 
     // ********************************************************
     // The order of connection is critical.
@@ -101,24 +152,7 @@ void PigStyManager::StartTheFarm()
 
     connect(quarantine_sty, QuarantinePigSty::ReturnQuarantineStyData, this, PigStyManager::SendQuarantineStyData);
 
-    connect(game_timer, GameTimer::timeout, this, [ = ]()
-    {
-        bool infection_exists = false;
-
-        for (int i = 0; i < PigStyAmount; i++)
-        {
-            // Tell the button in `game_main_window` if the sty is infected.
-            bool sty_infection_exist = pig_sty[i] -> CheckStyIsInfected();
-
-            if (sty_infection_exist)
-            {
-                infection_exists = true;
-            }
-        }
-
-        // Tell the `label_infection_status` in `game_main_window` if the infection exists.
-        emit InfectionExists(infection_exists);
-    });
+    connect(game_timer, GameTimer::timeout, this, SendInfectionInfo);
 
     for (int i = 0; i < PigStyAmount; i++)
     {
@@ -136,6 +170,29 @@ void PigStyManager::StartTheFarm()
             quarantine_sty -> AppendPig(pig_to_quarantine_list);
         }
     });
+
+    connect(this, PigStyManager::SellPigFinished, PigSty::GetInstance(), PigSty::MoneyUpdate);
+    connect(this, PigStyManager::SellPigFinished, PigSty::GetInstance(), PigSty::SoldAmountUpdate);
+    SendInfectionInfo();
+}
+
+void PigStyManager::SendInfectionInfo()
+{
+    bool infection_exists = false;
+
+    for (int i = 0; i < PigStyAmount; i++)
+    {
+        // Tell the button in `game_main_window` if the sty is infected.
+        bool sty_infection_exist = pig_sty[i] -> CheckStyIsInfected();
+
+        if (sty_infection_exist)
+        {
+            infection_exists = true;
+        }
+    }
+
+    // Tell the `label_infection_status` in `game_main_window` if the infection exists.
+    emit InfectionExists(infection_exists);
 }
 
 // Transit the signal from `sty_detail_window` to the specific sty.
@@ -174,23 +231,23 @@ void PigStyManager::InfectionSpreadAcrossSty()
 
         if (sty_infected_num[i] % PigStyPerRow == 0)
         {
-            sty_to_infect[0] == -1;
+            sty_to_infect[0] = -1;
         }
         else
         {
-            sty_to_infect[0] == sty_infected_num[i] - 1;
+            sty_to_infect[0] = sty_infected_num[i] - 1;
         }
 
         if (sty_infected_num[i] % PigStyPerRow == PigStyPerRow - 1)
         {
-            sty_to_infect[1] == -1;
+            sty_to_infect[1] = -1;
         }
         else
         {
             sty_to_infect[1] = sty_infected_num[i] + 1;
         }
 
-        if (sty_infected_num[i] < PigStyPerRow)
+        if (sty_infected_num[i] < PigStyPerRow * 1)
         {
             sty_to_infect[2] = -1;
         }
@@ -212,7 +269,7 @@ void PigStyManager::InfectionSpreadAcrossSty()
         {
             if (sty_to_infect[j] >= 0 and sty_to_infect[j] < PigStyPerRow * PigStyPerColumn)
             {
-                pig_sty[sty_to_infect[j]] -> InfectionSpreadFromOthers();
+                pig_sty[sty_to_infect[j]] -> InfectionSpreadFromOthers(); // Bug
             }
         }
     }
@@ -226,4 +283,10 @@ void PigStyManager::SetInfectionPosibility(const float &posibility)
 void PigStyManager::DisposeQuarantineSty()
 {
     this -> quarantine_sty -> DisposeInfectedPig();
+}
+
+void PigStyManager::SetArchiveName(const QString &name)
+{
+    ArchiveName = name;
+    PigSty::SetArchiveName(name);
 }

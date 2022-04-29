@@ -24,10 +24,11 @@ public:
         int year = 0;
     };
     static Date ConvertToDate(int day);
-    int Random();
+    void SetTime(long time);
 signals:
     Timeout_3Month();
     InfectionOccur();
+    TimeUpdate();
 };
 extern GameTimer *game_timer;
 

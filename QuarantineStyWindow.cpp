@@ -32,7 +32,6 @@ QuarantineStyWindow::QuarantineStyWindow(QWidget *parent) :
 
     this -> Configure_label_title();
     this -> Configure_button_dispose();
-    qDebug() << ui ->table_pig_information -> parent();
 }
 
 QuarantineStyWindow::~QuarantineStyWindow()
