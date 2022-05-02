@@ -12,6 +12,7 @@
   </property>
   <property name="font">
    <font>
+    <family>Minecraft</family>
     <italic>false</italic>
     <bold>false</bold>
     <underline>false</underline>
@@ -34,6 +35,7 @@
     </property>
     <property name="font">
      <font>
+      <family>Minecraft</family>
       <pointsize>12</pointsize>
       <italic>false</italic>
       <bold>true</bold>
@@ -57,6 +59,7 @@
     </property>
     <property name="font">
      <font>
+      <family>Minecraft</family>
       <italic>false</italic>
       <bold>false</bold>
       <underline>false</underline>
@@ -74,11 +77,17 @@
       <x>0</x>
       <y>0</y>
       <width>241</width>
-      <height>311</height>
+      <height>576</height>
      </rect>
     </property>
     <property name="styleSheet">
      <string notr="true">background-color: rgba(255, 255, 255, 120);</string>
+    </property>
+    <property name="frameShape">
+     <enum>QFrame::NoFrame</enum>
+    </property>
+    <property name="frameShadow">
+     <enum>QFrame::Sunken</enum>
     </property>
    </widget>
    <widget class="QListView" name="listView_3">
@@ -87,17 +96,106 @@
       <x>783</x>
       <y>0</y>
       <width>241</width>
-      <height>311</height>
+      <height>576</height>
      </rect>
     </property>
     <property name="styleSheet">
      <string notr="true">background-color: rgba(255, 255, 255, 120);</string>
+    </property>
+    <property name="frameShape">
+     <enum>QFrame::NoFrame</enum>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label">
+    <property name="geometry">
+     <rect>
+      <x>248</x>
+      <y>0</y>
+      <width>521</width>
+      <height>61</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>19</pointsize>
+      <italic>false</italic>
+      <bold>true</bold>
+      <underline>false</underline>
+      <strikeout>false</strikeout>
+      <kerning>true</kerning>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true"/>
+    </property>
+    <property name="text">
+     <string>Manage Your Sty Here</string>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignCenter</set>
+    </property>
+   </widget>
+   <widget class="MyPushButton" name="pushButton_introduction">
+    <property name="geometry">
+     <rect>
+      <x>820</x>
+      <y>440</y>
+      <width>161</width>
+      <height>40</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Minecraft</family>
+      <pointsize>11</pointsize>
+      <italic>false</italic>
+      <bold>false</bold>
+      <underline>false</underline>
+      <strikeout>false</strikeout>
+      <kerning>true</kerning>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(220, 220, 220);</string>
+    </property>
+    <property name="text">
+     <string>Introduction</string>
+    </property>
+   </widget>
+   <widget class="MyPushButton" name="pushButton_about">
+    <property name="geometry">
+     <rect>
+      <x>820</x>
+      <y>500</y>
+      <width>161</width>
+      <height>40</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Minecraft</family>
+      <pointsize>11</pointsize>
+      <italic>false</italic>
+      <bold>false</bold>
+      <underline>false</underline>
+      <strikeout>false</strikeout>
+      <kerning>true</kerning>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(220, 220, 220);</string>
+    </property>
+    <property name="text">
+     <string>About</string>
     </property>
    </widget>
    <zorder>listView</zorder>
    <zorder>listView_2</zorder>
    <zorder>listView_3</zorder>
    <zorder>pushButton_pause</zorder>
+   <zorder>label</zorder>
+   <zorder>pushButton_introduction</zorder>
+   <zorder>pushButton_about</zorder>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
@@ -105,7 +203,7 @@
      <x>0</x>
      <y>0</y>
      <width>1024</width>
-     <height>19</height>
+     <height>22</height>
     </rect>
    </property>
   </widget>

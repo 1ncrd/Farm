@@ -21,7 +21,6 @@
   </property>
   <property name="font">
    <font>
-    <family>Minecraft</family>
     <pointsize>9</pointsize>
    </font>
   </property>
@@ -71,7 +70,6 @@
     </property>
     <property name="font">
      <font>
-      <family>Minecraft</family>
       <pointsize>36</pointsize>
       <italic>false</italic>
       <bold>false</bold>
@@ -109,7 +107,6 @@
     </property>
     <property name="font">
      <font>
-      <family>Minecraft</family>
       <pointsize>15</pointsize>
      </font>
     </property>
@@ -131,7 +128,6 @@
     </property>
     <property name="font">
      <font>
-      <family>Minecraft</family>
       <pointsize>15</pointsize>
      </font>
     </property>
@@ -153,7 +149,6 @@
     </property>
     <property name="font">
      <font>
-      <family>Minecraft</family>
       <pointsize>15</pointsize>
      </font>
     </property>
@@ -185,7 +180,6 @@
     </property>
     <property name="font">
      <font>
-      <family>Minecraft</family>
       <pointsize>11</pointsize>
      </font>
     </property>
@@ -207,7 +201,6 @@
     </property>
     <property name="font">
      <font>
-      <family>Minecraft</family>
       <pointsize>11</pointsize>
      </font>
     </property>
@@ -246,11 +239,10 @@
      <x>0</x>
      <y>0</y>
      <width>1024</width>
-     <height>19</height>
+     <height>22</height>
     </rect>
    </property>
   </widget>
-  <widget class="QStatusBar" name="statusbar"/>
  </widget>
  <customwidgets>
   <customwidget>

@@ -15,8 +15,11 @@ private:
     int volume;  // Ranges from 0 to 100
     QMediaPlayer * player;
     QAudioOutput * output;
+    QStringList music_list;
 public:
+    static const QString MusicPath;
     static const int VolumeMax;
+
     BGMPlayer(QObject *parent = nullptr);
     ~BGMPlayer();
     void SetVolume(const int &volume_temp);

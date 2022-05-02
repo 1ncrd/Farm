@@ -34,6 +34,8 @@ private:
     QLabel * label_date;
     QLabel * label_money;
     QLabel * label_pig_sold_amount;
+    QLabel * label_pig_amount;
+    QLabel * label_infected_amount;
     QLabel * label_infection_status;
     QScrollArea * scroll_area_choose_sty;
     QWidget * area_choose_sty;
@@ -44,8 +46,6 @@ private:
     MyPushButton * button_show_trade_record_window;
     MyPushButton * button_quarantine_pig;
     MyPushButton * button_show_quarantine_sty;
-
-    // `thread_to_process` to deal with computing tasks.
 public:
     explicit GameMainWindow(QWidget *parent = nullptr);
     ~GameMainWindow();
@@ -53,6 +53,8 @@ public:
     void Create_label_date();
     void Create_label_money();
     void Create_label_pig_sold_amount();
+    void Create_label_pig_amount();
+    void Create_label_infected_amount();
     void Create_label_infection_status();
     void Create_area_choose_sty_with_btn();
     void Create_sty_detail_window();
@@ -61,10 +63,13 @@ public:
     void Create_button_quarantine_pig();
     void Create_button_show_quarantine_sty();
     void Create_quarantine_sty_window();
-
+    void Configue_pushButton_introduction();
+    void Configue_pushButton_about();
     void Connect_label_date();
     void Connect_label_money();
     void Connect_label_pig_sold_amount();
+    void Connect_label_pig_amount();
+    void Connect_label_infected_amount();
     void Connect_label_infection_status();
     void Connect_button_to_Sty_Detail();
     void Connect_button_show_trade_record_window();

@@ -5,6 +5,7 @@
 #include <QDebug>
 #include <QStringList>
 #include <QStringBuilder>
+#include <QDateTime>
 
 FileManager * file_manager = new FileManager;
 
@@ -114,6 +115,7 @@ void FileManager::CreateFile(const QString &file_path, const QString &file_name)
 
 void FileManager::ReadTradeRecord(QVector<TradeRecord> * result_qvector, const QString &file_name)
 {
+    int t1 = QDateTime::currentSecsSinceEpoch();
     QFile temp_file(TradeRecordFolderPath + file_name + RecordFileSuffix);
 
     if (temp_file.exists() and temp_file.open(QIODevice::ReadOnly | QIODevice::Text))
@@ -139,7 +141,44 @@ void FileManager::ReadTradeRecord(QVector<TradeRecord> * result_qvector, const Q
 
     temp_file.close();
     emit ReadTradeRecordCompleted();
+    qDebug() << "花费时间(s)：" << QDateTime::currentSecsSinceEpoch() - t1;
 }
+
+// Another method to read data. But according to my test, the speed of it is almost same as the initial one.
+
+//void FileManager::ReadTradeRecord(QVector<TradeRecord> * result_qvector, const QString &file_name)
+//{
+//    int t1 = QDateTime::currentSecsSinceEpoch();
+//    QFile temp_file(TradeRecordFolderPath + file_name + RecordFileSuffix);
+
+//    if (temp_file.exists() and temp_file.open(QIODevice::ReadOnly | QIODevice::Text))
+//    {
+//        qDebug().noquote() << "[+] Reading trade record in " + file_name + RecordFileSuffix;
+//    }
+//    else
+//    {
+//        qDebug().noquote() << "[#] Trade record read fail";
+//    }
+
+//    while (!temp_file.atEnd())
+//    {
+//        const QByteArray line = temp_file.readLine().simplified();
+//        const QList<QByteArray> data = line.split('|');
+//        TradeRecord record_temp;
+//        record_temp.trade_time = QString(data.at(0)).toInt();
+//        record_temp.trade_type = TradeType(QString(data.at(1)).toInt());
+//        record_temp.pig_id = QString(data.at(2));
+//        record_temp.pig_species = Pig::PigSpecies(QString(data.at(3)).toInt());
+//        record_temp.pig_weight = QString(data.at(4)).toFloat();
+//        record_temp.pig_age = QString(data.at(5)).toInt();
+//        result_qvector -> append(record_temp);
+//    }
+
+//    temp_file.close();
+//    emit ReadTradeRecordCompleted();
+//    qDebug() << "readComplete";
+//    qDebug() << QDateTime::currentSecsSinceEpoch() - t1;
+//}
 
 void FileManager::ClearRecordFile(const QString &file_name)
 {

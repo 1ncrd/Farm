@@ -4,7 +4,7 @@
 
 GameTimer *game_timer = new GameTimer;
 
-const int GameTimer::DayInterval = 100;    // millisecond(s).
+const int GameTimer::DayInterval = 1000;    // millisecond(s).
 GameTimer::GameTimer(QObject *parent)
     : QTimer{parent}
 {

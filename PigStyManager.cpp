@@ -46,7 +46,7 @@ void PigStyManager::StartTheFarm()
 
     // Create a `quarantine_sty` to manage the infected pig;
     quarantine_sty = new QuarantinePigSty(QuarantineStyID);
-
+    CountPigAmount();
     this -> ConfigueFunc();
 }
 
@@ -77,6 +77,7 @@ void PigStyManager::StartTheFarm(const FileManager::GameData &game_data)
         }
     }
 
+    CountPigAmount();
     this -> ConfigueFunc();
 }
 
@@ -116,6 +117,8 @@ void PigStyManager::ConfigueFunc()
         {
             emit InfectionOccur();
         }
+
+        CountPigAmount();
     });
 
     // Timeout_3Month
@@ -179,11 +182,13 @@ void PigStyManager::ConfigueFunc()
 void PigStyManager::SendInfectionInfo()
 {
     bool infection_exists = false;
+    int infected_amount = 0;
 
     for (int i = 0; i < PigStyAmount; i++)
     {
         // Tell the button in `game_main_window` if the sty is infected.
         bool sty_infection_exist = pig_sty[i] -> CheckStyIsInfected();
+        infected_amount += pig_sty[i] -> CountInfectedAmount();
 
         if (sty_infection_exist)
         {
@@ -193,6 +198,7 @@ void PigStyManager::SendInfectionInfo()
 
     // Tell the `label_infection_status` in `game_main_window` if the infection exists.
     emit InfectionExists(infection_exists);
+    emit SendInfectedAmount(infected_amount);
 }
 
 // Transit the signal from `sty_detail_window` to the specific sty.
@@ -289,4 +295,16 @@ void PigStyManager::SetArchiveName(const QString &name)
 {
     ArchiveName = name;
     PigSty::SetArchiveName(name);
+}
+
+void PigStyManager::CountPigAmount()
+{
+    int pig_amount = 0;
+
+    for (int i = 0; i < PigStyAmount; i++)
+    {
+        pig_amount += pig_sty[i] -> GetPigAmount();
+    }
+
+    emit SendPigAmount(pig_amount);
 }

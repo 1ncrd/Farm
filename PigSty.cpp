@@ -86,6 +86,14 @@ void PigSty::AppendPig(Pig * const &ptr_pig_to_append_head)
     if (ptr_pig_head == nullptr)
     {
         ptr_pig_head = ptr_pig_to_append_head;
+        auto ptr_to_count = ptr_pig_to_append_head;
+
+        // Count the added amount.
+        while (ptr_to_count != nullptr)
+        {
+            ptr_to_count = ptr_to_count -> next_pig;
+            pig_amount++;
+        }
     }
     else
     {
@@ -101,6 +109,7 @@ void PigSty::AppendPig(Pig * const &ptr_pig_to_append_head)
 
         auto ptr_to_count = ptr_pig_to_append_head;
 
+        // Count the added amount.
         while (ptr_to_count != nullptr)
         {
             ptr_to_count = ptr_to_count -> next_pig;
@@ -517,6 +526,24 @@ bool PigSty::CheckStyIsInfected()
 
     emit ReturnIsInfected(is_infected);
     return is_infected;
+}
+
+int PigSty::CountInfectedAmount()
+{
+    int infected_amount = 0;
+    Pig * ptr_pig_current = ptr_pig_head;
+
+    while (ptr_pig_current != nullptr)
+    {
+        if (ptr_pig_current -> is_infected)
+        {
+            infected_amount++;
+        }
+
+        ptr_pig_current = ptr_pig_current -> next_pig;
+    }
+
+    return infected_amount;
 }
 
 PigSty::StySpeciesSituation PigSty::CheckStySpeciesSituation() const

@@ -41,6 +41,7 @@ HomeWindow::HomeWindow(QWidget *parent)
     // *********************************************************************
 
     // Start `thread_to_process`.
+    // 使用多线程处理数据计算和文件操作。
     QThread * thread_to_process_pig = new QThread;
     QThread * thread_to_process_file = new QThread;
     thread_to_process_pig -> start();
@@ -84,14 +85,12 @@ void HomeWindow::ConfigueUI()
     ui -> pushButton_about -> setFont(QFont("Minecraft", 11));
 //    ui -> StartGame_pushButton -> setStyleSheet("background: gray");
 
-    // Set the statusbar
-    QStatusBar * MyStatusBar = new QStatusBar(this);
-    this -> setStatusBar(MyStatusBar);
-
     // Set the Version label
     QLabel * Version_label = new QLabel("Vertion " + VertionNumber, this);
     Version_label -> setFont(QFont("Minecraft", 10));
-    MyStatusBar -> addWidget(Version_label);
+    Version_label -> adjustSize();
+    Version_label -> move(0, WindowHeight - 20);
+    Version_label -> setStyleSheet("color: rgba(255,255,255,200);");
 }
 
 void HomeWindow::Configue_pushButton_start_game()

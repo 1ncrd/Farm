@@ -40,6 +40,7 @@ public:
     void DeletePig(Pig * const &ptr_pig_to_delete);
     void DeleteAllPigs();
     void LetAllPigGrow();
+    int CountInfectedAmount();
     void InfectOnePig();
     void InfectionSpreadInSty();
     void InfectionSpreadFromOthers();

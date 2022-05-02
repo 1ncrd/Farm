@@ -18,8 +18,6 @@ TradeRecordWindow::TradeRecordWindow(QWidget *parent) :
     // Block other windows when showing.
     this -> setAttribute(Qt::WA_ShowModal, true);
 
-    ui -> label_title -> setParent(this);
-
     this -> SetTitle();
     this -> SetTableRecord();
     // this -> SetTableHeader();
@@ -46,7 +44,6 @@ void TradeRecordWindow::SetTitle()
 void TradeRecordWindow::SetTableHeader()
 {
     // Rely on the `table_record` to set width.
-    qDebug() << "[+] Set table header.";
     ui -> table_header -> setSelectionMode(QAbstractItemView::NoSelection);
     ui -> table_header -> setEditTriggers(QAbstractItemView::NoEditTriggers);
 
@@ -218,4 +215,4 @@ void TradeRecordWindow::closeEvent(QCloseEvent *event)
     ui -> comboBox_filter_TradeType -> setCurrentIndex(0);
     event -> accept();
 }
-// TODO 数据时间大于1500时就卡的一批。
+// TODO 时间大于1500时就卡的一批。

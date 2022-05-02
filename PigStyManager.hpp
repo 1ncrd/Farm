@@ -35,9 +35,12 @@ public:
     void DisposeQuarantineSty();
     void SendInfectionInfo();
     void SetArchiveName(const QString &name);
+    void CountPigAmount();
 signals:
     InfectionOccur();
     SellPigFinished();
+    SendPigAmount(int amount);
+    SendInfectedAmount(int amount);
     SendStyData(QVector<Pig::PigInfo> sty_data);
     SendQuarantineStyData(QVector<Pig::PigInfo> sty_data);
     StyIsInfected(int sty_num, bool is_infected);

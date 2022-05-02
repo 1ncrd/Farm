@@ -24,8 +24,6 @@ GameMainWindow::GameMainWindow(QWidget *parent) :
     this -> setFixedSize(WindowWidth, WindowHeight);
     this -> setWindowTitle("The Pig Farm");
     this -> setWindowIcon(QIcon(":/Resources/Picture/PigFace.png"));
-
-
     // ***************************************************************************
     // Create first and then connect them to enssure the object to connect exists.
     // ***************************************************************************
@@ -34,6 +32,8 @@ GameMainWindow::GameMainWindow(QWidget *parent) :
     this -> Create_label_money();
     this -> Create_label_infection_status();
     this -> Create_label_pig_sold_amount();
+    this -> Create_label_pig_amount();
+    this -> Create_label_infected_amount();
     this -> Create_area_choose_sty_with_btn();
     this -> Create_sty_detail_window();
     this -> Create_quarantine_sty_window();
@@ -41,11 +41,14 @@ GameMainWindow::GameMainWindow(QWidget *parent) :
     this -> Create_button_show_trade_record_window();
     this -> Create_button_quarantine_pig();
     this -> Create_button_show_quarantine_sty();
-
+    this -> Configue_pushButton_about();
+    this -> Configue_pushButton_introduction();
     // Read the pig data after all the process about pig being finished.
     this -> Connect_label_date();
     this -> Connect_label_money();
     this -> Connect_label_pig_sold_amount();
+    this -> Connect_label_pig_amount();
+    this -> Connect_label_infected_amount();
     this -> Connect_label_infection_status();
     this -> Connect_button_to_Sty_Detail();
     this -> Connect_button_quarantine_pig();
@@ -102,7 +105,7 @@ void GameMainWindow::Create_label_date()
     // Create a `QLabel` to display the *date*.
     this -> label_date = new QLabel(this);
     label_date -> move(15, 15);
-    label_date -> setFont(QFont("Minecraft", 15));
+    label_date -> setFont(QFont("Minecraft", 16));
     label_date -> setText(QString("Day:\t0"));
     label_date -> adjustSize();
     label_date -> show();
@@ -113,7 +116,7 @@ void GameMainWindow::Create_label_money()
     // Create a `QLabel` object to display the *money*.
     this -> label_money = new QLabel(this);
     label_money -> move(15, 40);
-    label_money -> setFont(QFont("Minecraft", 15));
+    label_money -> setFont(QFont("Minecraft", 16));
     label_money -> setText(QString("Money:\t0"));
     label_money -> adjustSize();
     label_money -> show();
@@ -123,10 +126,10 @@ void GameMainWindow::Create_label_pig_sold_amount()
 {
     // Create a `QLabel` object to display the *amount of pig sold*.
     this -> label_pig_sold_amount = new QLabel(this);
-    label_pig_sold_amount -> move(15, 75);
-    label_pig_sold_amount -> setFont(QFont("Minecraft", 11));
+    label_pig_sold_amount -> move(15, 80);
+    label_pig_sold_amount -> setFont(QFont("Minecraft", 12));
     label_pig_sold_amount -> setText(QString("Amount of pig sold:"
-                                     "\n\nBlackPig:\n0"
+                                     "\nBlackPig:\n0"
                                      "\n\nSmallFlowerPig:\n0"
                                      "\n\nBigWhitePig:\n0"
                                      "\n\nSum:\n0"));
@@ -134,24 +137,48 @@ void GameMainWindow::Create_label_pig_sold_amount()
     label_pig_sold_amount -> show();
 }
 
+void GameMainWindow::Create_label_pig_amount()
+{
+    this -> label_pig_amount = new QLabel(this);
+    label_pig_amount -> move(WindowWidth - 230, 75);
+    label_pig_amount -> setFont(QFont("Minecraft", 12));
+    label_pig_amount -> setText(QString("Current pig amount:\n"
+                                        "0"));
+    label_pig_amount -> adjustSize();
+    label_pig_amount -> show();
+}
+
+void GameMainWindow::Create_label_infected_amount()
+{
+    this -> label_infected_amount = new QLabel(this);
+    label_infected_amount -> move(WindowWidth - 230, 125);
+    label_infected_amount -> setFont(QFont("Minecraft", 12));
+    label_infected_amount -> setText(QString("Infected pig amount:\n"
+                                     "0"));
+    label_infected_amount -> adjustSize();
+    label_infected_amount -> show();
+}
+
 void GameMainWindow::Create_label_infection_status()
 {
     this -> label_infection_status = new QLabel(this);
-    label_infection_status -> move(WindowWidth - 230, 75);
-    QFont font("Minecraft", 15);
+    label_infection_status -> move(WindowWidth - 230, 175);//175
+    QFont font("Minecraft", 16);
     font.setBold(true);
+    font.setUnderline(true);
     label_infection_status -> setFont(font);
     label_infection_status -> setStyleSheet("QLabel{color:rgb(50,205,50);}");
     label_infection_status -> setText(QString("No Infections."));
     label_infection_status -> adjustSize();
     label_infection_status -> show();
+    // TODO show infected amount in game.
 }
 void GameMainWindow::Create_area_choose_sty_with_btn()
 {
     // Create a `QScrollArea` object to display the *100-sty choice*.
     this -> scroll_area_choose_sty = new QScrollArea(this);
-    scroll_area_choose_sty -> setStyleSheet("background-color:rgba(255,255,255,120);");
-    scroll_area_choose_sty -> setGeometry(WindowWidth / 4, 0, WindowWidth / 2, WindowHeight - 171);
+    scroll_area_choose_sty -> setStyleSheet("background-color:rgba(255,255,255,80);");
+    scroll_area_choose_sty -> setGeometry(WindowWidth / 4, 60, WindowWidth / 2, WindowHeight - 171);
     scroll_area_choose_sty -> setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
     scroll_area_choose_sty -> setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     scroll_area_choose_sty -> verticalScrollBar() -> setDisabled(true);
@@ -217,7 +244,7 @@ void GameMainWindow::Create_button_show_trade_record_window()
 void GameMainWindow::Create_button_quarantine_pig()
 {
     button_quarantine_pig = new MyPushButton(this);
-    button_quarantine_pig -> move(WindowWidth - 235, 110);
+    button_quarantine_pig -> move(WindowWidth - 235, 210);
     button_quarantine_pig -> resize(150, 35);
     button_quarantine_pig -> setText(QString("Quarantine"));
     button_quarantine_pig -> setFont(QFont("Minecraft", 12));
@@ -226,7 +253,7 @@ void GameMainWindow::Create_button_quarantine_pig()
 void GameMainWindow::Create_button_show_quarantine_sty()
 {
     button_show_quarantine_sty = new MyPushButton(this);
-    button_show_quarantine_sty -> move(WindowWidth - 235, 160);
+    button_show_quarantine_sty -> move(WindowWidth - 235, 260);
     button_show_quarantine_sty -> resize(190, 35);
     button_show_quarantine_sty -> setText(QString("Quarantine Sty"));
     button_show_quarantine_sty -> setFont(QFont("Minecraft", 12));
@@ -264,11 +291,31 @@ void GameMainWindow::Connect_label_pig_sold_amount()
     connect(PigSty::GetInstance(), PigSty::SoldAmountUpdate, this, [ = ]()
     {
         label_pig_sold_amount -> setText(QString("Amount of pig sold:") +
-                                         QString("\n\nBlackPig:\n") + QString::number(PigSty::pig_sold_amount.BlackPig) +
+                                         QString("\nBlackPig:\n") + QString::number(PigSty::pig_sold_amount.BlackPig) +
                                          QString("\n\nSmallFlowerPig:\n") + QString::number(PigSty::pig_sold_amount.SmallFlowerPig) +
                                          QString("\n\nBigWhitePig:\n") + QString::number(PigSty::pig_sold_amount.BigWhitePig) +
                                          QString("\n\nSum:\n") + QString::number(PigSty::pig_sold_amount.total));
         label_pig_sold_amount -> adjustSize();
+    });
+}
+
+void GameMainWindow::Connect_label_pig_amount()
+{
+    connect(pig_sty_manager, PigStyManager::SendPigAmount, this, [ = ](int amount)
+    {
+        label_pig_amount -> setText(QString("Current pig amount:\n"
+                                            + QString::number(amount)));
+        label_pig_amount -> adjustSize();
+    });
+}
+
+void GameMainWindow::Connect_label_infected_amount()
+{
+    connect(pig_sty_manager, PigStyManager::SendInfectedAmount, this, [ = ](int amount)
+    {
+        label_infected_amount -> setText(QString("Infected amount:\n")
+                                         + QString::number(amount));
+        label_infected_amount -> adjustSize();
     });
 }
 
@@ -407,5 +454,20 @@ void GameMainWindow::ConfiguePauseButton()
             game_timer -> start();
             ui -> pushButton_pause -> setText("Pause");
         }
+    });
+}
+
+void GameMainWindow::Configue_pushButton_introduction()
+{
+    connect(ui -> pushButton_introduction, QPushButton::clicked, this, [ = ]()
+    {
+        QMessageBox::about(this, QString("Guidance"), message_guidance);
+    });
+}
+void GameMainWindow::Configue_pushButton_about()
+{
+    connect(ui -> pushButton_about, QPushButton::clicked, this, [ = ]()
+    {
+        QMessageBox::about(this, QString("About"), message_about);
     });
 }

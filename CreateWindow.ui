@@ -10,6 +10,11 @@
     <height>576</height>
    </rect>
   </property>
+  <property name="font">
+   <font>
+    <family>Minecraft</family>
+   </font>
+  </property>
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
@@ -25,6 +30,7 @@
     </property>
     <property name="font">
      <font>
+      <family>Minecraft</family>
       <pointsize>15</pointsize>
      </font>
     </property>
@@ -61,6 +67,7 @@
        </property>
        <property name="font">
         <font>
+         <family>Minecraft</family>
          <pointsize>12</pointsize>
         </font>
        </property>
@@ -91,6 +98,7 @@
        </property>
        <property name="font">
         <font>
+         <family>Minecraft</family>
          <pointsize>12</pointsize>
         </font>
        </property>
@@ -124,6 +132,7 @@
        </property>
        <property name="font">
         <font>
+         <family>Minecraft</family>
          <pointsize>11</pointsize>
         </font>
        </property>
@@ -193,6 +202,7 @@
     </property>
     <property name="font">
      <font>
+      <family>Minecraft</family>
       <pointsize>11</pointsize>
      </font>
     </property>
@@ -211,6 +221,7 @@
     </property>
     <property name="font">
      <font>
+      <family>Minecraft</family>
       <pointsize>11</pointsize>
      </font>
     </property>
