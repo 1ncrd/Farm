@@ -24,6 +24,7 @@ public:
     void Start();
     void LoadTableRecord();
     void FilterTableRecord(bool if_filter_type = false, bool if_filter_species = false, FileManager::TradeType filter_type = FileManager::Buy, Pig::PigSpecies filter_species = Pig::BlackPig);
+    void ConfigueComboBox();
     void ConfigueFilter();
 
     void closeEvent(QCloseEvent *event);

@@ -10,6 +10,7 @@
 #include "StyDetailWindow.hpp"
 #include "QuarantineStyWindow.hpp"
 #include "TradeRecordWindow.hpp"
+#include "MyPushButton.hpp"
 
 namespace Ui
 {
@@ -40,9 +41,9 @@ private:
     TradeRecordWindow * trade_record_window;
     Sty_Detail_Window * sty_detail_window;
     QuarantineStyWindow * quarantine_sty_window;
-    QPushButton * button_show_trade_record_window;
-    QPushButton * button_quarantine_pig;
-    QPushButton * button_show_quarantine_sty;
+    MyPushButton * button_show_trade_record_window;
+    MyPushButton * button_quarantine_pig;
+    MyPushButton * button_show_quarantine_sty;
 
     // `thread_to_process` to deal with computing tasks.
 public:
@@ -72,6 +73,7 @@ public:
 
     void Sty_Detail_Window_PreLoad();
     void ConfigueArchiveStore();
+    void ConfiguePauseButton();
     void StoreGameData();
     void closeEvent(QCloseEvent *event);
 signals:

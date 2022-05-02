@@ -10,11 +10,16 @@
     <height>576</height>
    </rect>
   </property>
+  <property name="font">
+   <font>
+    <family>Minecraft</family>
+   </font>
+  </property>
   <property name="windowTitle">
    <string>Archive</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QPushButton" name="pushButton_enter">
+   <widget class="MyPushButton" name="pushButton_enter">
     <property name="geometry">
      <rect>
       <x>232</x>
@@ -25,15 +30,17 @@
     </property>
     <property name="font">
      <font>
-      <family>Minecraft</family>
       <pointsize>15</pointsize>
      </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(220, 220, 220);</string>
     </property>
     <property name="text">
      <string>Enter</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="pushButton_delete">
+   <widget class="MyPushButton" name="pushButton_delete">
     <property name="geometry">
      <rect>
       <x>522</x>
@@ -44,15 +51,17 @@
     </property>
     <property name="font">
      <font>
-      <family>Minecraft</family>
       <pointsize>15</pointsize>
      </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(220, 220, 220);</string>
     </property>
     <property name="text">
      <string>Delete</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="pushButton_create">
+   <widget class="MyPushButton" name="pushButton_create">
     <property name="geometry">
      <rect>
       <x>232</x>
@@ -63,9 +72,11 @@
     </property>
     <property name="font">
      <font>
-      <family>Minecraft</family>
       <pointsize>15</pointsize>
      </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(220, 220, 220);</string>
     </property>
     <property name="text">
      <string>Create</string>
@@ -80,6 +91,22 @@
       <height>381</height>
      </rect>
     </property>
+    <property name="styleSheet">
+     <string notr="true">QListWidget::item:hover
+{
+    color:rgb(255,239,213);
+};
+QListWidget::item::selected:active
+{ 
+    color:rgb(255,239,213);
+    border-width:2;
+};
+QListWidget::item:selected
+{
+    color:rgb(255,239,213);
+    border-width:2;
+};</string>
+    </property>
     <property name="horizontalScrollBarPolicy">
      <enum>Qt::ScrollBarAlwaysOff</enum>
     </property>
@@ -87,7 +114,7 @@
      <enum>QAbstractItemView::SingleSelection</enum>
     </property>
    </widget>
-   <widget class="QPushButton" name="pushButton_back">
+   <widget class="MyPushButton" name="pushButton_back">
     <property name="geometry">
      <rect>
       <x>20</x>
@@ -98,14 +125,35 @@
     </property>
     <property name="font">
      <font>
-      <family>Minecraft</family>
       <pointsize>15</pointsize>
      </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(220, 220, 220);</string>
     </property>
     <property name="text">
      <string>&lt;- Back</string>
     </property>
    </widget>
+   <widget class="QListView" name="listView">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>0</y>
+      <width>1024</width>
+      <height>576</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">border-image: url(:/Resources/Picture/View.png);</string>
+    </property>
+   </widget>
+   <zorder>listView</zorder>
+   <zorder>pushButton_enter</zorder>
+   <zorder>pushButton_delete</zorder>
+   <zorder>pushButton_create</zorder>
+   <zorder>listWidget_archive_display</zorder>
+   <zorder>pushButton_back</zorder>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
@@ -113,13 +161,18 @@
      <x>0</x>
      <y>0</y>
      <width>1024</width>
-     <height>26</height>
+     <height>19</height>
     </rect>
    </property>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>
  <customwidgets>
+  <customwidget>
+   <class>MyPushButton</class>
+   <extends>QPushButton</extends>
+   <header location="global">MyPushButton.hpp</header>
+  </customwidget>
   <customwidget>
    <class>MyListWidget</class>
    <extends>QListWidget</extends>

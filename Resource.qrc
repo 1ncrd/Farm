@@ -1,5 +1,7 @@
 <RCC>
     <qresource prefix="/">
         <file>Resources/Picture/PigFace.png</file>
+        <file>Resources/Picture/View.png</file>
+        <file>Resources/Picture/dirt_background.png</file>
     </qresource>
 </RCC>

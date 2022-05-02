@@ -7,6 +7,11 @@ PushButtonToSty::PushButtonToSty(QWidget *parent)
     : QPushButton{parent}
 {
     this -> setStyleSheet("background-color: rgba(173, 255, 47, 255)");
+
+    effect.setSource(QUrl::fromLocalFile("./Resources/Sound/button_click.wav"));
+    effect.setLoopCount(1);
+    effect.setVolume(0.5);
+    connect(this, QPushButton::clicked, &effect, QSoundEffect::play);
 }
 
 PushButtonToSty::~PushButtonToSty()

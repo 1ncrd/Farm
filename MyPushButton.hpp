@@ -1,14 +1,17 @@
 #ifndef MYPUSHBUTTON_HPP
 #define MYPUSHBUTTON_HPP
 
-#include <QObject>
+#include <QPushButton>
+#include <QSoundEffect>
 
-class MyPushButton : public QObject
+
+class MyPushButton : public QPushButton
 {
     Q_OBJECT
 public:
-    explicit MyPushButton(QObject *parent = nullptr);
-
+    explicit MyPushButton(QWidget *parent = nullptr);
+private:
+    QSoundEffect effect;
 signals:
 
 };

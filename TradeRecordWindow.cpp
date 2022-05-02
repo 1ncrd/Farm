@@ -3,6 +3,7 @@
 #include <QLabel>
 #include <QMessageBox>
 #include <QTableWidgetItem>
+#include <QStandardItemModel>
 #include "GameMainWindow.hpp"
 #include "Pig.hpp"
 
@@ -23,6 +24,7 @@ TradeRecordWindow::TradeRecordWindow(QWidget *parent) :
     this -> SetTableRecord();
     // this -> SetTableHeader();
     this -> ConfigueFilter();
+    this -> ConfigueComboBox();
 
     this -> result_qvector = new QVector<FileManager::TradeRecord>;
     connect(this, TradeRecordWindow::RequestTradeRecord, file_manager, FileManager::ReadTradeRecord);
@@ -103,7 +105,6 @@ void TradeRecordWindow::Start()
 
 void TradeRecordWindow::LoadTableRecord()
 {
-    this -> SetTableHeader();
     ui -> table_record -> clearContents();
     ui -> table_record -> setRowCount(0);
 
@@ -132,6 +133,7 @@ void TradeRecordWindow::LoadTableRecord()
         ui -> table_record -> setItem(row_count, 5, content_age);
     }
 
+    this -> SetTableHeader();
     this -> show();
 }
 
@@ -161,7 +163,7 @@ void TradeRecordWindow::FilterTableRecord(bool if_filter_type, bool if_filter_sp
             content_species -> setTextAlignment(Qt::AlignCenter);
             content_weight -> setTextAlignment(Qt::AlignCenter);
             content_age -> setTextAlignment(Qt::AlignCenter);
-            ui -> table_record -> setRowHeight(row_count, 17);
+            ui -> table_record -> setRowHeight(row_count, 20);
             ui -> table_record -> setItem(row_count, 0, content_time);
             ui -> table_record -> setItem(row_count, 1, content_type);
             ui -> table_record -> setItem(row_count, 2, content_id);
@@ -170,6 +172,31 @@ void TradeRecordWindow::FilterTableRecord(bool if_filter_type, bool if_filter_sp
             ui -> table_record -> setItem(row_count, 5, content_age);
         }
     }
+}
+
+void TradeRecordWindow::ConfigueComboBox()
+{
+    for (int i = 0; i < ui -> comboBox_filter_Species -> count(); ++i)
+    {
+        // Set the content of the combobox to be horizontal center.
+        static_cast<QStandardItemModel*>(ui -> comboBox_filter_Species -> model())
+        -> item(i) -> setTextAlignment(Qt::AlignCenter);
+    }
+
+    for (int i = 0; i < ui -> comboBox_filter_TradeType -> count(); ++i)
+    {
+        // Set the content of the combobox to be horizontal center.
+        static_cast<QStandardItemModel*>(ui -> comboBox_filter_TradeType -> model())
+        -> item(i) -> setTextAlignment(Qt::AlignCenter);
+    }
+
+    QString str = "QComboBox QAbstractItemView::item{\
+                    min-height:30px;\
+                    min-width:20px;\
+                    }";
+
+    ui -> comboBox_filter_Species -> setStyleSheet(str);
+    ui -> comboBox_filter_TradeType -> setStyleSheet(str);
 }
 
 void TradeRecordWindow::ConfigueFilter()
@@ -187,5 +214,8 @@ void TradeRecordWindow::ConfigueFilter()
 void TradeRecordWindow::closeEvent(QCloseEvent *event)
 {
     ui -> table_record -> clearContents();
+    ui -> comboBox_filter_Species -> setCurrentIndex(0);
+    ui -> comboBox_filter_TradeType -> setCurrentIndex(0);
     event -> accept();
 }
+// TODO 数据时间大于1500时就卡的一批。

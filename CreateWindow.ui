@@ -25,7 +25,6 @@
     </property>
     <property name="font">
      <font>
-      <family>Minecraft</family>
       <pointsize>15</pointsize>
      </font>
     </property>
@@ -155,7 +154,6 @@
        </property>
        <property name="font">
         <font>
-         <family>Minecraft</family>
          <pointsize>11</pointsize>
         </font>
        </property>
@@ -184,7 +182,7 @@
      </item>
     </layout>
    </widget>
-   <widget class="QPushButton" name="pushButton_create">
+   <widget class="MyPushButton" name="pushButton_create">
     <property name="geometry">
      <rect>
       <x>40</x>
@@ -195,7 +193,6 @@
     </property>
     <property name="font">
      <font>
-      <family>Minecraft</family>
       <pointsize>11</pointsize>
      </font>
     </property>
@@ -203,7 +200,7 @@
      <string>Create</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="pushButton_abort">
+   <widget class="MyPushButton" name="pushButton_abort">
     <property name="geometry">
      <rect>
       <x>280</x>
@@ -221,6 +218,28 @@
      <string>Abort</string>
     </property>
    </widget>
+   <widget class="QLabel" name="label_instructions">
+    <property name="geometry">
+     <rect>
+      <x>22</x>
+      <y>255</y>
+      <width>471</width>
+      <height>61</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Minecraft</family>
+      <pointsize>10</pointsize>
+     </font>
+    </property>
+    <property name="text">
+     <string>The increase in difficulty corresponds to the increase in the probability of swine fever</string>
+    </property>
+    <property name="wordWrap">
+     <bool>true</bool>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
@@ -228,12 +247,19 @@
      <x>0</x>
      <y>0</y>
      <width>512</width>
-     <height>26</height>
+     <height>22</height>
     </rect>
    </property>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>MyPushButton</class>
+   <extends>QPushButton</extends>
+   <header location="global">MyPushButton.hpp</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

@@ -15,6 +15,7 @@
   </property>
   <property name="font">
    <font>
+    <family>Minecraft</family>
     <pointsize>9</pointsize>
    </font>
   </property>
@@ -33,6 +34,7 @@
     </property>
     <property name="font">
      <font>
+      <family>Minecraft</family>
       <pointsize>19</pointsize>
      </font>
     </property>
@@ -54,6 +56,7 @@
     </property>
     <property name="font">
      <font>
+      <family>Minecraft</family>
       <pointsize>9</pointsize>
      </font>
     </property>
@@ -76,7 +79,7 @@
      <bool>false</bool>
     </attribute>
    </widget>
-   <widget class="QPushButton" name="button_dispose">
+   <widget class="MyPushButton" name="button_dispose">
     <property name="geometry">
      <rect>
       <x>310</x>
@@ -87,6 +90,7 @@
     </property>
     <property name="font">
      <font>
+      <family>Minecraft</family>
       <pointsize>12</pointsize>
      </font>
     </property>
@@ -105,7 +109,6 @@
     </property>
     <property name="font">
      <font>
-      <family>Minecraft</family>
       <pointsize>12</pointsize>
      </font>
     </property>
@@ -120,12 +123,19 @@
      <x>0</x>
      <y>0</y>
      <width>512</width>
-     <height>26</height>
+     <height>19</height>
     </rect>
    </property>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>MyPushButton</class>
+   <extends>QPushButton</extends>
+   <header location="global">MyPushButton.hpp</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

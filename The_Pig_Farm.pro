@@ -16,6 +16,7 @@ SOURCES += \
     BgmPlayer.cpp \
     CreateWindow.cpp \
     FileManager.cpp \
+    GameInfo.cpp \
     GameMainWindow.cpp \
     GameTimer.cpp \
     HomeWindow.cpp \
@@ -40,6 +41,7 @@ HEADERS += \
     BgmPlayer.hpp \
     CreateWindow.hpp \
     FileManager.hpp \
+    GameInfo.hpp \
     GameMainWindow.hpp \
     GameTimer.hpp \
     HomeWindow.hpp \

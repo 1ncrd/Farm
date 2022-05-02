@@ -5,6 +5,7 @@
 #include <QLabel>
 #include <QMessageBox>
 #include "BgmPlayer.hpp"
+#include "GameInfo.hpp"
 
 const int GameMainWindow::WindowWidth = 1024;
 const int GameMainWindow::WindowHeight = 576;
@@ -54,6 +55,7 @@ GameMainWindow::GameMainWindow(QWidget *parent) :
     // Without the "Sty_Detail_Window_PreLoad()",
     // there will be a bit of lag to show the `sty_window` when the user clicks the pushbutton_entersty first time for some unknown reason.
     this -> ConfigueArchiveStore();
+    this -> ConfiguePauseButton();
 }
 
 GameMainWindow::~GameMainWindow()
@@ -124,10 +126,10 @@ void GameMainWindow::Create_label_pig_sold_amount()
     label_pig_sold_amount -> move(15, 75);
     label_pig_sold_amount -> setFont(QFont("Minecraft", 11));
     label_pig_sold_amount -> setText(QString("Amount of pig sold:"
-                                     "\n\nBlackPig:\t\t0"
-                                     "\n\nSmallFlowerPig:\t0"
-                                     "\n\nBigWhitePig:\t0"
-                                     "\n\nSum:\t\t0"));
+                                     "\n\nBlackPig:\n0"
+                                     "\n\nSmallFlowerPig:\n0"
+                                     "\n\nBigWhitePig:\n0"
+                                     "\n\nSum:\n0"));
     label_pig_sold_amount -> adjustSize();
     label_pig_sold_amount -> show();
 }
@@ -135,9 +137,11 @@ void GameMainWindow::Create_label_pig_sold_amount()
 void GameMainWindow::Create_label_infection_status()
 {
     this -> label_infection_status = new QLabel(this);
-    label_infection_status -> move(WindowWidth - 230, 25);
-    label_infection_status -> setFont(QFont("Minecraft", 15));
-    label_infection_status -> setStyleSheet("QLabel{color:rgb(0,205,0);}");
+    label_infection_status -> move(WindowWidth - 230, 75);
+    QFont font("Minecraft", 15);
+    font.setBold(true);
+    label_infection_status -> setFont(font);
+    label_infection_status -> setStyleSheet("QLabel{color:rgb(50,205,50);}");
     label_infection_status -> setText(QString("No Infections."));
     label_infection_status -> adjustSize();
     label_infection_status -> show();
@@ -146,6 +150,7 @@ void GameMainWindow::Create_area_choose_sty_with_btn()
 {
     // Create a `QScrollArea` object to display the *100-sty choice*.
     this -> scroll_area_choose_sty = new QScrollArea(this);
+    scroll_area_choose_sty -> setStyleSheet("background-color:rgba(255,255,255,120);");
     scroll_area_choose_sty -> setGeometry(WindowWidth / 4, 0, WindowWidth / 2, WindowHeight - 171);
     scroll_area_choose_sty -> setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
     scroll_area_choose_sty -> setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -154,6 +159,7 @@ void GameMainWindow::Create_area_choose_sty_with_btn()
 
     // Set a `QWidget` object in the `scroll_area_choose_sty` to display the 100 buttons.
     area_choose_sty = new QWidget(scroll_area_choose_sty);
+    area_choose_sty -> setStyleSheet("background-color:rgba(255,255,255,120);");
     const int area_choose_sty_width = WindowWidth - 20;
     const int area_choose_sty_height = WindowHeight - 170;
 
@@ -201,17 +207,17 @@ void GameMainWindow::Create_trade_record_window()
 void GameMainWindow::Create_button_show_trade_record_window()
 {
     // Create a `QPushButton` object.
-    button_show_trade_record_window = new QPushButton(this);
-    button_show_trade_record_window -> move(15, WindowHeight - 55);
-    button_show_trade_record_window -> resize(150, 40);
+    button_show_trade_record_window = new MyPushButton(this);
+    button_show_trade_record_window -> move(15, WindowHeight - 65);
+    button_show_trade_record_window -> resize(200, 50);
     button_show_trade_record_window -> setText(QString("Trade Record"));
-    button_show_trade_record_window -> setFont(QFont("Minecraft", 12));
+    button_show_trade_record_window -> setFont(QFont("Minecraft", 15));
 }
 
 void GameMainWindow::Create_button_quarantine_pig()
 {
-    button_quarantine_pig = new QPushButton(this);
-    button_quarantine_pig -> move(WindowWidth - 235, 60);
+    button_quarantine_pig = new MyPushButton(this);
+    button_quarantine_pig -> move(WindowWidth - 235, 110);
     button_quarantine_pig -> resize(150, 35);
     button_quarantine_pig -> setText(QString("Quarantine"));
     button_quarantine_pig -> setFont(QFont("Minecraft", 12));
@@ -219,8 +225,8 @@ void GameMainWindow::Create_button_quarantine_pig()
 
 void GameMainWindow::Create_button_show_quarantine_sty()
 {
-    button_show_quarantine_sty = new QPushButton(this);
-    button_show_quarantine_sty -> move(WindowWidth - 235, 110);
+    button_show_quarantine_sty = new MyPushButton(this);
+    button_show_quarantine_sty -> move(WindowWidth - 235, 160);
     button_show_quarantine_sty -> resize(190, 35);
     button_show_quarantine_sty -> setText(QString("Quarantine Sty"));
     button_show_quarantine_sty -> setFont(QFont("Minecraft", 12));
@@ -258,10 +264,10 @@ void GameMainWindow::Connect_label_pig_sold_amount()
     connect(PigSty::GetInstance(), PigSty::SoldAmountUpdate, this, [ = ]()
     {
         label_pig_sold_amount -> setText(QString("Amount of pig sold:") +
-                                         QString("\n\nBlackPig:\t\t") + QString::number(PigSty::pig_sold_amount.BlackPig) +
-                                         QString("\n\nSmallFlowerPig:\t") + QString::number(PigSty::pig_sold_amount.SmallFlowerPig) +
-                                         QString("\n\nBigWhitePig:\t") + QString::number(PigSty::pig_sold_amount.BigWhitePig) +
-                                         QString("\n\nSum:\t\t") + QString::number(PigSty::pig_sold_amount.total));
+                                         QString("\n\nBlackPig:\n") + QString::number(PigSty::pig_sold_amount.BlackPig) +
+                                         QString("\n\nSmallFlowerPig:\n") + QString::number(PigSty::pig_sold_amount.SmallFlowerPig) +
+                                         QString("\n\nBigWhitePig:\n") + QString::number(PigSty::pig_sold_amount.BigWhitePig) +
+                                         QString("\n\nSum:\n") + QString::number(PigSty::pig_sold_amount.total));
         label_pig_sold_amount -> adjustSize();
     });
 }
@@ -274,14 +280,14 @@ void GameMainWindow::Connect_label_infection_status()
         if (infection_exists)
         {
             // Turn to red.
-            this -> label_infection_status -> setStyleSheet("QLabel{color:rgb(255,0,0);}");
+            this -> label_infection_status -> setStyleSheet("QLabel{color:rgb(255,48,48);}");
             this -> label_infection_status -> setText(QString("Outbreak!"));
             this -> label_infection_status -> adjustSize();
         }
         else
         {
             // Turn to green.
-            this -> label_infection_status -> setStyleSheet("QLabel{color:rgb(0,205,0);}");
+            this -> label_infection_status -> setStyleSheet("QLabel{color:rgb(50,205,50);}");
             this -> label_infection_status -> setText(QString("No Infections."));
             this -> label_infection_status -> adjustSize();
         }
@@ -323,7 +329,7 @@ void GameMainWindow::Connect_button_quarantine_pig()
 
     connect(button_quarantine_pig, QPushButton::clicked, this, [ = ]()
     {
-        this -> label_infection_status -> setStyleSheet("QLabel{color:rgb(0,205,0);}");
+        this -> label_infection_status -> setStyleSheet("QLabel{color:rgb(50,205,50);}");
         this -> label_infection_status -> setText(QString("No Infections."));
         this -> label_infection_status -> adjustSize();
     });
@@ -382,5 +388,24 @@ void GameMainWindow::closeEvent(QCloseEvent *event)
     {
         event -> accept();
     }
+}
 
+void GameMainWindow::ConfiguePauseButton()
+{
+    ui -> pushButton_pause -> move(WindowWidth - 235, 10);
+    ui -> pushButton_pause -> setFixedWidth(200);
+    ui -> pushButton_pause -> setFont(QFont("Minecraft", 15));
+    connect(ui -> pushButton_pause, QPushButton::clicked, this, [ = ]()
+    {
+        if (game_timer -> isActive())
+        {
+            game_timer -> stop();
+            ui -> pushButton_pause -> setText("Resume");
+        }
+        else
+        {
+            game_timer -> start();
+            ui -> pushButton_pause -> setText("Pause");
+        }
+    });
 }

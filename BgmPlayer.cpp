@@ -9,9 +9,9 @@ BGMPlayer::BGMPlayer(QObject *parent)
 {
     player = new QMediaPlayer(this);
     output = new QAudioOutput(this);
-    player -> setSource(QUrl::fromLocalFile("./Resources/Music/404 not found.flac"));
+    player -> setSource(QUrl::fromLocalFile("./Resources/Music/Living Mice.flac"));
     player -> setAudioOutput(output);
-    output -> setVolume(0);
+    output -> setVolume(0.1);
     player -> play();
 }
 

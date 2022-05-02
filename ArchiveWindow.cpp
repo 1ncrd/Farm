@@ -38,6 +38,10 @@ ArchiveWindow::ArchiveWindow(QWidget *parent) :
         this -> hide();
         emit Back();
     });
+
+    QPalette palette = ui -> listWidget_archive_display -> palette();
+    palette.setBrush(QPalette::Base, QBrush(QColor(255, 255, 255, 120)));
+    ui -> listWidget_archive_display -> setPalette(palette);
 }
 ArchiveWindow::~ArchiveWindow()
 {

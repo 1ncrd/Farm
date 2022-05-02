@@ -13,11 +13,6 @@
 
 int main(int argc, char *argv[])
 {
-    if (QT_VERSION >= QT_VERSION_CHECK(5, 6, 0))
-    {
-        QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
-    }
-
     // Register the custom type into the `MetaType` to transport them across the QThreads.
     qRegisterMetaType<PigSty>("Pig_Sty");
     qRegisterMetaType<PigSty>("Pig_Sty&");

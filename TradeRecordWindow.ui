@@ -52,7 +52,8 @@
     </property>
     <property name="font">
      <font>
-      <pointsize>7</pointsize>
+      <family>Minecraft</family>
+      <pointsize>8</pointsize>
      </font>
     </property>
     <property name="focusPolicy">
@@ -135,9 +136,7 @@
      </sizepolicy>
     </property>
     <property name="font">
-     <font>
-      <family>Minecraft</family>
-     </font>
+     <font/>
     </property>
     <property name="focusPolicy">
      <enum>Qt::NoFocus</enum>
@@ -251,7 +250,9 @@
         </sizepolicy>
        </property>
        <property name="font">
-        <font/>
+        <font>
+         <family>Minecraft</family>
+        </font>
        </property>
        <item>
         <property name="text">
@@ -284,7 +285,9 @@
         </sizepolicy>
        </property>
        <property name="font">
-        <font/>
+        <font>
+         <family>Minecraft</family>
+        </font>
        </property>
        <item>
         <property name="text">
@@ -304,9 +307,11 @@
       </widget>
      </item>
      <item row="1" column="3">
-      <widget class="QPushButton" name="pushButton_exec_filter">
+      <widget class="MyPushButton" name="pushButton_exec_filter">
        <property name="font">
-        <font/>
+        <font>
+         <family>Minecraft</family>
+        </font>
        </property>
        <property name="text">
         <string>Filter</string>
@@ -322,12 +327,19 @@
      <x>0</x>
      <y>0</y>
      <width>512</width>
-     <height>26</height>
+     <height>22</height>
     </rect>
    </property>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>MyPushButton</class>
+   <extends>QPushButton</extends>
+   <header location="global">MyPushButton.hpp</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

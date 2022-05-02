@@ -57,9 +57,7 @@ void CreateWindow::ConfigueComboBox()
         -> item(i) -> setTextAlignment(Qt::AlignCenter);
     }
 
-    QString str = "QComboBox QAbstractItemView::item\
-                    {\
-                    font-family:Minecraft;\
+    QString str = "QComboBox QAbstractItemView::item{\
                     font-size:12px;\
                     min-height:40px;\
                     min-width:20px;\

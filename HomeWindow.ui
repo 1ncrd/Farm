@@ -28,6 +28,9 @@
   <property name="windowTitle">
    <string>The_initial_interface</string>
   </property>
+  <property name="styleSheet">
+   <string notr="true"/>
+  </property>
   <widget class="QWidget" name="centralwidget">
    <widget class="QLabel" name="label_pig_logo">
     <property name="geometry">
@@ -86,7 +89,7 @@
      <string>WELCOME TO MY PIG FARM!!!</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="pushButton_start_game">
+   <widget class="MyPushButton" name="pushButton_start_game">
     <property name="enabled">
      <bool>true</bool>
     </property>
@@ -110,11 +113,14 @@
       <pointsize>15</pointsize>
      </font>
     </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(220, 220, 220);</string>
+    </property>
     <property name="text">
      <string>Start Game</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="pushButton_setting">
+   <widget class="MyPushButton" name="pushButton_setting">
     <property name="geometry">
      <rect>
       <x>330</x>
@@ -129,11 +135,14 @@
       <pointsize>15</pointsize>
      </font>
     </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(220, 220, 220);</string>
+    </property>
     <property name="text">
      <string>Settings</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="pushButton_quit">
+   <widget class="MyPushButton" name="pushButton_quit">
     <property name="geometry">
      <rect>
       <x>329</x>
@@ -148,6 +157,10 @@
       <pointsize>15</pointsize>
      </font>
     </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(220, 220, 220);
+</string>
+    </property>
     <property name="text">
      <string>Quit</string>
     </property>
@@ -161,7 +174,7 @@
      <bool>false</bool>
     </property>
    </widget>
-   <widget class="QPushButton" name="pushButton_about">
+   <widget class="MyPushButton" name="pushButton_about">
     <property name="geometry">
      <rect>
       <x>530</x>
@@ -173,14 +186,17 @@
     <property name="font">
      <font>
       <family>Minecraft</family>
-      <pointsize>9</pointsize>
+      <pointsize>11</pointsize>
      </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(220, 220, 220);</string>
     </property>
     <property name="text">
      <string>About</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="pushButton_introduction">
+   <widget class="MyPushButton" name="pushButton_introduction">
     <property name="geometry">
      <rect>
       <x>329</x>
@@ -192,13 +208,37 @@
     <property name="font">
      <font>
       <family>Minecraft</family>
-      <pointsize>9</pointsize>
+      <pointsize>11</pointsize>
      </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgb(220, 220, 220);</string>
     </property>
     <property name="text">
      <string>Introduction</string>
     </property>
    </widget>
+   <widget class="QListView" name="listView">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>0</y>
+      <width>1024</width>
+      <height>576</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">border-image: url(:/Resources/Picture/View.png);</string>
+    </property>
+   </widget>
+   <zorder>listView</zorder>
+   <zorder>label_pig_logo</zorder>
+   <zorder>label_title_welcome</zorder>
+   <zorder>pushButton_start_game</zorder>
+   <zorder>pushButton_setting</zorder>
+   <zorder>pushButton_quit</zorder>
+   <zorder>pushButton_about</zorder>
+   <zorder>pushButton_introduction</zorder>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
@@ -206,12 +246,19 @@
      <x>0</x>
      <y>0</y>
      <width>1024</width>
-     <height>22</height>
+     <height>19</height>
     </rect>
    </property>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>MyPushButton</class>
+   <extends>QPushButton</extends>
+   <header location="global">MyPushButton.hpp</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

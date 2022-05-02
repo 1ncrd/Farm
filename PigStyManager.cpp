@@ -53,7 +53,7 @@ void PigStyManager::StartTheFarm()
 void PigStyManager::StartTheFarm(const FileManager::GameData &game_data)
 {
     PigSty::SetSoldAmount(game_data.pigsty_info.pig_sold_amount);
-    PigSty::money = game_data.pigsty_info.money;
+    PigSty::SetMoney(game_data.pigsty_info.money);
 
     for (int i = 0; i < PigStyAmount; i++)
     {

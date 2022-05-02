@@ -7,7 +7,7 @@ long PigSty::money = 0;
 PigSoldAmount PigSty::pig_sold_amount;
 int PigSty::InfectionTransRateInSty = 50;
 int PigSty::InfectionTransRateAcrossSty = 15;
-PigSty * PigSty::temp_instance = new PigSty;
+PigSty * PigSty::temp_instance = new PigSty("Temp Instance");
 QString PigSty::ArchiveName;
 
 PigSty::PigSty(QObject *parent)

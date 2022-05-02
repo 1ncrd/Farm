@@ -23,8 +23,6 @@ public:
     static const int WindowHeight;
     static const QString VertionNumber;
 
-    static const QString message_guidance;
-    static const QString message_about;
     HomeWindow(QWidget *parent = nullptr);
     ~HomeWindow();
     void ConfigueUI();

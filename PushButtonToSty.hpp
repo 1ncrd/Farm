@@ -3,12 +3,14 @@
 
 #include <QPushButton>
 #include <QString>
+#include <QSoundEffect>
 
 class PushButtonToSty : public QPushButton
 {
     Q_OBJECT
 private:
     QString btn_entersty_id;
+    QSoundEffect effect;
 
 public:
     explicit PushButtonToSty(QWidget *parent = nullptr);
