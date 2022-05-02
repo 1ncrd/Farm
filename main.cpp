@@ -2,6 +2,8 @@
 #include <QObject>
 #include <QDebug>
 #include <QMetaType>
+#include <QFontDatabase>
+#include <QFile>
 #include "HomeWindow.hpp"
 #include "GameMainWindow.hpp"
 #include "ArchiveWindow.hpp"
@@ -26,6 +28,9 @@ int main(int argc, char *argv[])
     qRegisterMetaType<PigSoldAmount>("PigSoldAmount");
     qRegisterMetaType<PigSoldAmount>("PigSoldAmount&");
     QApplication a(argc, argv);
+
+    // 添加第三方字体。
+    QFontDatabase::addApplicationFont("./Resources/Font/minecraft.ttf");
 
     // Create GameDatas and SalesRecords Folder.
     FileManager::CreateGameDataFolder();

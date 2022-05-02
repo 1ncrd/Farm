@@ -10,16 +10,24 @@
     <height>576</height>
    </rect>
   </property>
+  <property name="font">
+   <font>
+    <family>Minecraft</family>
+   </font>
+  </property>
   <property name="windowTitle">
    <string>MainWindow</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true"/>
   </property>
   <widget class="QWidget" name="centralwidget">
    <widget class="QWidget" name="gridLayoutWidget">
     <property name="geometry">
      <rect>
-      <x>40</x>
+      <x>10</x>
       <y>100</y>
-      <width>421</width>
+      <width>491</width>
       <height>111</height>
      </rect>
     </property>
@@ -28,11 +36,12 @@
       <widget class="QLabel" name="label_volume">
        <property name="font">
         <font>
+         <family>Microsoft YaHei UI</family>
          <pointsize>12</pointsize>
         </font>
        </property>
        <property name="text">
-        <string>Volume</string>
+        <string>Music</string>
        </property>
        <property name="alignment">
         <set>Qt::AlignCenter</set>
@@ -43,8 +52,12 @@
       <widget class="QSlider" name="horizontalSlider_volume">
        <property name="font">
         <font>
+         <family>Microsoft YaHei UI</family>
          <pointsize>12</pointsize>
         </font>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">color: rgb(111, 111, 111);</string>
        </property>
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
@@ -55,12 +68,13 @@
       <widget class="QLabel" name="label_volume_value">
        <property name="minimumSize">
         <size>
-         <width>40</width>
+         <width>50</width>
          <height>0</height>
         </size>
        </property>
        <property name="font">
         <font>
+         <family>Microsoft YaHei UI</family>
          <pointsize>12</pointsize>
         </font>
        </property>
@@ -85,7 +99,6 @@
     </property>
     <property name="font">
      <font>
-      <family>Minecraft</family>
       <pointsize>19</pointsize>
      </font>
     </property>

@@ -22,7 +22,6 @@ BGMPlayer::BGMPlayer(QObject *parent)
     int play_num = Random() % 5;
     player -> setSource(QUrl::fromLocalFile(MusicPath + music_list.at(play_num)));
     player -> play();
-    qDebug() << player -> playbackState();
     // 循环随机播放列表中的音乐。
     connect(player, QMediaPlayer::playbackStateChanged, this, [ = ]()
     {
@@ -33,7 +32,6 @@ BGMPlayer::BGMPlayer(QObject *parent)
             player -> play();
         }
     });
-    qDebug() << player -> playbackState();
 }
 
 BGMPlayer::~BGMPlayer()

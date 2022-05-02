@@ -21,6 +21,7 @@
   </property>
   <property name="font">
    <font>
+    <family>Minecraft</family>
     <pointsize>9</pointsize>
    </font>
   </property>
@@ -70,6 +71,7 @@
     </property>
     <property name="font">
      <font>
+      <family>Minecraft</family>
       <pointsize>36</pointsize>
       <italic>false</italic>
       <bold>false</bold>
@@ -107,6 +109,7 @@
     </property>
     <property name="font">
      <font>
+      <family>Minecraft</family>
       <pointsize>15</pointsize>
      </font>
     </property>
@@ -115,6 +118,12 @@
     </property>
     <property name="text">
      <string>Start Game</string>
+    </property>
+    <property name="iconSize">
+     <size>
+      <width>30</width>
+      <height>30</height>
+     </size>
     </property>
    </widget>
    <widget class="MyPushButton" name="pushButton_setting">
@@ -128,6 +137,7 @@
     </property>
     <property name="font">
      <font>
+      <family>Minecraft</family>
       <pointsize>15</pointsize>
      </font>
     </property>
@@ -149,6 +159,7 @@
     </property>
     <property name="font">
      <font>
+      <family>Minecraft</family>
       <pointsize>15</pointsize>
      </font>
     </property>
@@ -180,6 +191,7 @@
     </property>
     <property name="font">
      <font>
+      <family>Minecraft</family>
       <pointsize>11</pointsize>
      </font>
     </property>
@@ -201,6 +213,7 @@
     </property>
     <property name="font">
      <font>
+      <family>Minecraft</family>
       <pointsize>11</pointsize>
      </font>
     </property>
