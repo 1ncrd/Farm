@@ -59,7 +59,6 @@
     </property>
     <property name="font">
      <font>
-      <family>Minecraft</family>
       <italic>false</italic>
       <bold>false</bold>
       <underline>false</underline>
@@ -117,6 +116,7 @@
     </property>
     <property name="font">
      <font>
+      <family>Minecraft</family>
       <pointsize>19</pointsize>
       <italic>false</italic>
       <bold>true</bold>
@@ -138,9 +138,9 @@
    <widget class="MyPushButton" name="pushButton_introduction">
     <property name="geometry">
      <rect>
-      <x>820</x>
-      <y>440</y>
-      <width>161</width>
+      <x>330</x>
+      <y>500</y>
+      <width>160</width>
       <height>40</height>
      </rect>
     </property>
@@ -165,9 +165,9 @@
    <widget class="MyPushButton" name="pushButton_about">
     <property name="geometry">
      <rect>
-      <x>820</x>
+      <x>530</x>
       <y>500</y>
-      <width>161</width>
+      <width>160</width>
       <height>40</height>
      </rect>
     </property>
@@ -189,6 +189,42 @@
      <string>About</string>
     </property>
    </widget>
+   <widget class="QLabel" name="label_time_to_dieout">
+    <property name="geometry">
+     <rect>
+      <x>800</x>
+      <y>450</y>
+      <width>201</width>
+      <height>111</height>
+     </rect>
+    </property>
+    <property name="sizePolicy">
+     <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+      <horstretch>0</horstretch>
+      <verstretch>0</verstretch>
+     </sizepolicy>
+    </property>
+    <property name="font">
+     <font>
+      <family>Minecraft</family>
+      <pointsize>11</pointsize>
+      <italic>false</italic>
+      <bold>false</bold>
+      <underline>false</underline>
+      <strikeout>false</strikeout>
+      <kerning>true</kerning>
+     </font>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="alignment">
+     <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+    </property>
+    <property name="wordWrap">
+     <bool>true</bool>
+    </property>
+   </widget>
    <zorder>listView</zorder>
    <zorder>listView_2</zorder>
    <zorder>listView_3</zorder>
@@ -196,6 +232,7 @@
    <zorder>label</zorder>
    <zorder>pushButton_introduction</zorder>
    <zorder>pushButton_about</zorder>
+   <zorder>label_time_to_dieout</zorder>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">

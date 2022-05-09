@@ -87,31 +87,35 @@ QVector<Pig::PigInfo> PigStyManager::GetAllPigData()
 
     for (int i = 0; i < PigStyAmount; i++)
     {
-        result.append(pig_sty[i] -> GetAllPigData());
+        result.append(pig_sty[i] -> GetStyData_ReturnWithValue());
     }
 
-    result.append(quarantine_sty -> GetAllPigData());
+    result.append(quarantine_sty -> GetStyData_ReturnWithValue());
     return result;
 }
 
 void PigStyManager::ConfigueFunc()
 {
-
-    // ********************************************************
+    // **********************************************************
     // The order of connection is critical.
     // It should determine the order of the function execution.
-    // ********************************************************
+    // For example, the `SellPig` should before the `AddTo10Pig`.
+    // **********************************************************
 
     // Let pigs grow once a second.
     connect(game_timer, GameTimer::timeout, this, [ = ]()
     {
+        this -> InfectionSpreadAcrossSty();
+
         for (int i = 0; i < PigStyAmount; i++)
         {
             pig_sty[i] -> LetAllPigGrow();
             pig_sty[i] -> InfectionSpreadInSty();
+            pig_sty[i] -> InfectedPigDiedAfterTime();
         }
 
-        this -> InfectionSpreadAcrossSty();
+        SendInfectionInfo();
+        emit SendTimeToDieOut(CalculateTimeToDieout());
 
         if (Probability(InfectionPosibility))
         {
@@ -124,26 +128,33 @@ void PigStyManager::ConfigueFunc()
     // Timeout_3Month
     connect(game_timer, GameTimer::Timeout_3Month, this, [ = ]()
     {
+        int sale_money = 0;
+
         // Sell pigs that meet the requirements once every three months.
         for (int i = 0; i < PigStyAmount; i++)
         {
-            pig_sty[i] -> SellPig();
+            sale_money += pig_sty[i] -> SellPig();
         }
 
-        // After selling the pigs, randomly replenish(补充) pigs in the remaining space
+        // Calculate the money earned from selling the pigs in this sale.
+        emit SendSaleMoney(sale_money);
+
+        // After selling the pigs, replenish(补充) pigs in the remaining space
         for (int i = 0; i < PigStyAmount; i++)
         {
-            pig_sty[i] -> AddRandomPig();
+            pig_sty[i] -> AddTo10Pig();
         }
     });
 
     connect(this, PigStyManager::InfectionOccur, this, [ = ]()
     {
+        // Choose a random sty to outbreak.
         pig_sty[Random() % 100] -> InfectOnePig();
     });
 
     connect(pig_sty[99], PigSty::SellPigFinished, this, [ = ]()
     {
+        // emit this signal to update the data in game main window.
         emit SellPigFinished();
     });
 
@@ -155,10 +166,9 @@ void PigStyManager::ConfigueFunc()
 
     connect(quarantine_sty, QuarantinePigSty::ReturnQuarantineStyData, this, PigStyManager::SendQuarantineStyData);
 
-    connect(game_timer, GameTimer::timeout, this, SendInfectionInfo);
-
     for (int i = 0; i < PigStyAmount; i++)
     {
+        // Accept the signal from pig sty and send it to game main window.
         connect(pig_sty[i], PigSty::ReturnIsInfected, this, [ = ](bool is_infected)
         {
             emit StyIsInfected(i, is_infected);
@@ -199,6 +209,8 @@ void PigStyManager::SendInfectionInfo()
     // Tell the `label_infection_status` in `game_main_window` if the infection exists.
     emit InfectionExists(infection_exists);
     emit SendInfectedAmount(infected_amount);
+    // Send the time it takes for all the pigs to die.
+//    emit SendTimeToDieOut();
 }
 
 // Transit the signal from `sty_detail_window` to the specific sty.
@@ -210,7 +222,7 @@ QString PigStyManager::GetID(const int &sty_num)
 // Transit the signal from `sty_detail_window` to the specific sty.
 void PigStyManager::GetStyData(const int &sty_num)
 {
-    pig_sty[sty_num] -> GetStyData();
+    pig_sty[sty_num] -> GetStyData_ReturnWithSignal();
 }
 
 void PigStyManager::GetQuarantineStyData()
@@ -221,55 +233,20 @@ void PigStyManager::GetQuarantineStyData()
 // Spread the infection across sty.
 void PigStyManager::InfectionSpreadAcrossSty()
 {
-    QVector<int> sty_infected_num;
+    QVector<int> infected_sty_num;
 
     for (int i = 0; i < PigStyAmount; i++)
     {
         if (pig_sty[i] -> InfectionExists())
         {
-            sty_infected_num.append(i);
+            infected_sty_num.append(i);
         }
     }
 
-    for (int i = 0; i < sty_infected_num.length(); i++)
+    for (int i = 0; i < infected_sty_num.length(); i++)
     {
-        int sty_to_infect[4];   // 0, 1, 2, 3 stand for left, right, above, below.
-
-        if (sty_infected_num[i] % PigStyPerRow == 0)
-        {
-            sty_to_infect[0] = -1;
-        }
-        else
-        {
-            sty_to_infect[0] = sty_infected_num[i] - 1;
-        }
-
-        if (sty_infected_num[i] % PigStyPerRow == PigStyPerRow - 1)
-        {
-            sty_to_infect[1] = -1;
-        }
-        else
-        {
-            sty_to_infect[1] = sty_infected_num[i] + 1;
-        }
-
-        if (sty_infected_num[i] < PigStyPerRow * 1)
-        {
-            sty_to_infect[2] = -1;
-        }
-        else
-        {
-            sty_to_infect[2] = sty_infected_num[i] - 10;
-        }
-
-        if (sty_infected_num[i] >= PigStyPerRow * (PigStyPerColumn - 1))
-        {
-            sty_to_infect[3] = -1;
-        }
-        else
-        {
-            sty_to_infect[3] = sty_infected_num[i] + 10;
-        }
+        int sty_to_infect[4];
+        GetStyAround(infected_sty_num[i], sty_to_infect);
 
         for (int j = 0; j < 4; j++)
         {
@@ -299,7 +276,7 @@ void PigStyManager::SetArchiveName(const QString &name)
 
 void PigStyManager::CountPigAmount()
 {
-    int pig_amount = 0;
+    PigAmount pig_amount;
 
     for (int i = 0; i < PigStyAmount; i++)
     {
@@ -307,4 +284,92 @@ void PigStyManager::CountPigAmount()
     }
 
     emit SendPigAmount(pig_amount);
+}
+
+int PigStyManager::CalculateTimeToDieout()
+{
+    int day_result = 0;
+    const int TimeSpreadAcross = 100 / PigSty::InfectionTransRateAcrossSty;
+
+    int min = 100;
+
+    for (int i = 0; i < PigStyPerColumn; i++)
+    {
+        for (int j = 0; j < PigStyPerColumn; j++)
+        {
+            if (pig_sty[i * PigStyPerColumn + j] -> InfectionExists())
+            {
+                int distance = 0;
+
+                if (i > 5)
+                {
+                    distance += i;
+                }
+                else
+                {
+                    distance += 9 - i;
+                }
+
+                if (j > 5)
+                {
+                    distance += j;
+                }
+                else
+                {
+                    distance += 9 - j;
+                }
+
+                if (distance < min)
+                {
+                    min = distance;
+                }
+            }
+        }
+    }
+
+    day_result = min * (TimeSpreadAcross - 1);
+    day_result += 10;
+    qDebug() << "[+] Day to dieout:" << day_result;
+    return day_result;
+}
+
+int * PigStyManager::GetStyAround(int i, int sty_to_infect[4])
+{
+    if (i % PigStyPerRow == 0)
+    {
+        sty_to_infect[0] = -1;
+    }
+    else
+    {
+        sty_to_infect[0] = i - 1;
+    }
+
+    if (i % PigStyPerRow == PigStyPerRow - 1)
+    {
+        sty_to_infect[1] = -1;
+    }
+    else
+    {
+        sty_to_infect[1] = i + 1;
+    }
+
+    if (i < PigStyPerRow * 1)
+    {
+        sty_to_infect[2] = -1;
+    }
+    else
+    {
+        sty_to_infect[2] = i - 10;
+    }
+
+    if (i >= PigStyPerRow * (PigStyPerColumn - 1))
+    {
+        sty_to_infect[3] = -1;
+    }
+    else
+    {
+        sty_to_infect[3] = i + 10;
+    }
+
+    return sty_to_infect;
 }

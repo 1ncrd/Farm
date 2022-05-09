@@ -23,7 +23,7 @@ SOURCES += \
     MyPushButton.cpp \
     MyRandom.cpp \
     Pig.cpp \
-    PigSoldAmount.cpp \
+    PigAmount.cpp \
     PigSty.cpp \
     PigStyManager.cpp \
     PushButtonToSty.cpp \
@@ -48,7 +48,7 @@ HEADERS += \
     MyPushButton.hpp \
     MyRandom.hpp \
     Pig.hpp \
-    PigSoldAmount.hpp \
+    PigAmount.hpp \
     PigSty.hpp \
     PigStyManager.hpp \
     PushButtonToSty.hpp \

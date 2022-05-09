@@ -25,8 +25,8 @@ int main(int argc, char *argv[])
     qRegisterMetaType<FileManager::GameData>("GameData&");
     qRegisterMetaType<FileManager::PigStyInfo>("PigStyInfo");
     qRegisterMetaType<FileManager::PigStyInfo>("PigStyInfo&");
-    qRegisterMetaType<PigSoldAmount>("PigSoldAmount");
-    qRegisterMetaType<PigSoldAmount>("PigSoldAmount&");
+    qRegisterMetaType<PigAmount>("PigSoldAmount");
+    qRegisterMetaType<PigAmount>("PigSoldAmount&");
     QApplication a(argc, argv);
 
     // 添加第三方字体。

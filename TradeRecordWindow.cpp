@@ -215,4 +215,3 @@ void TradeRecordWindow::closeEvent(QCloseEvent *event)
     ui -> comboBox_filter_TradeType -> setCurrentIndex(0);
     event -> accept();
 }
-// TODO 时间大于1500时就卡的一批。

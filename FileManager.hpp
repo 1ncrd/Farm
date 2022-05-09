@@ -6,7 +6,7 @@
 #include <QVector>
 #include <QDateTime>
 #include "Pig.hpp"
-#include "PigSoldAmount.hpp"
+#include "PigAmount.hpp"
 
 class FileManager : public QObject
 {
@@ -25,7 +25,7 @@ public:
     };
     struct PigStyInfo
     {
-        PigSoldAmount pig_sold_amount;
+        PigAmount pig_sold_amount;
         long money = 0;
     };
     struct GameData

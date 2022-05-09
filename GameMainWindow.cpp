@@ -24,6 +24,7 @@ GameMainWindow::GameMainWindow(QWidget *parent) :
     this -> setFixedSize(WindowWidth, WindowHeight);
     this -> setWindowTitle("The Pig Farm");
     this -> setWindowIcon(QIcon(":/Resources/Picture/PigFace.png"));
+    this -> setFont(QFont("Minecraft", 9));
     // ***************************************************************************
     // Create first and then connect them to enssure the object to connect exists.
     // ***************************************************************************
@@ -32,6 +33,7 @@ GameMainWindow::GameMainWindow(QWidget *parent) :
     this -> Create_label_money();
     this -> Create_label_infection_status();
     this -> Create_label_pig_sold_amount();
+    this -> Create_label_sale_money();
     this -> Create_label_pig_amount();
     this -> Create_label_infected_amount();
     this -> Create_area_choose_sty_with_btn();
@@ -47,6 +49,7 @@ GameMainWindow::GameMainWindow(QWidget *parent) :
     this -> Connect_label_date();
     this -> Connect_label_money();
     this -> Connect_label_pig_sold_amount();
+    this -> Connect_label_sale_money();
     this -> Connect_label_pig_amount();
     this -> Connect_label_infected_amount();
     this -> Connect_label_infection_status();
@@ -59,6 +62,7 @@ GameMainWindow::GameMainWindow(QWidget *parent) :
     // there will be a bit of lag to show the `sty_window` when the user clicks the pushbutton_entersty first time for some unknown reason.
     this -> ConfigueArchiveStore();
     this -> ConfiguePauseButton();
+    this -> ConfigueLabel_dieout();
 }
 
 GameMainWindow::~GameMainWindow()
@@ -137,10 +141,21 @@ void GameMainWindow::Create_label_pig_sold_amount()
     label_pig_sold_amount -> show();
 }
 
+void GameMainWindow::Create_label_sale_money()
+{
+    this -> label_sale_money = new QLabel(this);
+    label_sale_money -> move(15, 300);
+    label_sale_money -> setFont(QFont("Minecraft", 12));
+    label_sale_money -> setText(QString("The price of \n"
+                                        "the last sale:\n"));
+    label_sale_money -> adjustSize();
+    label_sale_money -> show();
+}
+
 void GameMainWindow::Create_label_pig_amount()
 {
     this -> label_pig_amount = new QLabel(this);
-    label_pig_amount -> move(WindowWidth - 230, 75);
+    label_pig_amount -> move(WindowWidth - 230, 65);
     label_pig_amount -> setFont(QFont("Minecraft", 12));
     label_pig_amount -> setText(QString("Current pig amount:\n"
                                         "0"));
@@ -151,7 +166,7 @@ void GameMainWindow::Create_label_pig_amount()
 void GameMainWindow::Create_label_infected_amount()
 {
     this -> label_infected_amount = new QLabel(this);
-    label_infected_amount -> move(WindowWidth - 230, 125);
+    label_infected_amount -> move(WindowWidth - 230, 250);
     label_infected_amount -> setFont(QFont("Minecraft", 12));
     label_infected_amount -> setText(QString("Infected pig amount:\n"
                                      "0"));
@@ -162,16 +177,16 @@ void GameMainWindow::Create_label_infected_amount()
 void GameMainWindow::Create_label_infection_status()
 {
     this -> label_infection_status = new QLabel(this);
-    label_infection_status -> move(WindowWidth - 230, 175);//175
+    label_infection_status -> move(WindowWidth - 220, 290);
     QFont font("Minecraft", 16);
     font.setBold(true);
-    font.setUnderline(true);
     label_infection_status -> setFont(font);
-    label_infection_status -> setStyleSheet("QLabel{color:rgb(50,205,50);}");
+    label_infection_status -> setStyleSheet("QLabel{color:rgba(50,205,50,255);}");
     label_infection_status -> setText(QString("No Infections."));
+    label_infection_status -> setAttribute(Qt::WA_TranslucentBackground, true);
+    label_infection_status -> setFocusPolicy(Qt::NoFocus);
     label_infection_status -> adjustSize();
     label_infection_status -> show();
-    // TODO show infected amount in game.
 }
 void GameMainWindow::Create_area_choose_sty_with_btn()
 {
@@ -244,8 +259,8 @@ void GameMainWindow::Create_button_show_trade_record_window()
 void GameMainWindow::Create_button_quarantine_pig()
 {
     button_quarantine_pig = new MyPushButton(this);
-    button_quarantine_pig -> move(WindowWidth - 235, 210);
-    button_quarantine_pig -> resize(150, 35);
+    button_quarantine_pig -> resize(200, 40);
+    button_quarantine_pig -> move(800, 325);
     button_quarantine_pig -> setText(QString("Quarantine"));
     button_quarantine_pig -> setFont(QFont("Minecraft", 12));
 }
@@ -253,8 +268,8 @@ void GameMainWindow::Create_button_quarantine_pig()
 void GameMainWindow::Create_button_show_quarantine_sty()
 {
     button_show_quarantine_sty = new MyPushButton(this);
-    button_show_quarantine_sty -> move(WindowWidth - 235, 260);
-    button_show_quarantine_sty -> resize(190, 35);
+    button_show_quarantine_sty -> move(800, 375);
+    button_show_quarantine_sty -> resize(200, 40);
     button_show_quarantine_sty -> setText(QString("Quarantine Sty"));
     button_show_quarantine_sty -> setFont(QFont("Minecraft", 12));
 }
@@ -290,21 +305,42 @@ void GameMainWindow::Connect_label_pig_sold_amount()
     // Update the `label_pig_sold_amount` after the last `pig_sty` finished the sale.
     connect(PigSty::GetInstance(), PigSty::SoldAmountUpdate, this, [ = ]()
     {
-        label_pig_sold_amount -> setText(QString("Amount of pig sold:") +
-                                         QString("\nBlackPig:\n") + QString::number(PigSty::pig_sold_amount.BlackPig) +
-                                         QString("\n\nSmallFlowerPig:\n") + QString::number(PigSty::pig_sold_amount.SmallFlowerPig) +
-                                         QString("\n\nBigWhitePig:\n") + QString::number(PigSty::pig_sold_amount.BigWhitePig) +
-                                         QString("\n\nSum:\n") + QString::number(PigSty::pig_sold_amount.total));
+        label_pig_sold_amount -> setText(QString("Amount of pig sold:")
+                                         + QString("\nBlackPig:\n")
+                                         + QString::number(PigSty::pig_sold_amount.BlackPig)
+                                         + QString("\n\nSmallFlowerPig:\n")
+                                         + QString::number(PigSty::pig_sold_amount.SmallFlowerPig)
+                                         + QString("\n\nBigWhitePig:\n")
+                                         + QString::number(PigSty::pig_sold_amount.BigWhitePig)
+                                         + QString("\n\nSum:\n")
+                                         + QString::number(PigSty::pig_sold_amount.total));
         label_pig_sold_amount -> adjustSize();
+    });
+}
+
+void GameMainWindow::Connect_label_sale_money()
+{
+    connect(pig_sty_manager, PigStyManager::SendSaleMoney, this, [ = ](int sale_money)
+    {
+        label_sale_money -> setText(QString("The price of \n"
+                                            "the last sale:\n"
+                                            + QString::number(sale_money)));
+        label_sale_money -> adjustSize();
     });
 }
 
 void GameMainWindow::Connect_label_pig_amount()
 {
-    connect(pig_sty_manager, PigStyManager::SendPigAmount, this, [ = ](int amount)
+    connect(pig_sty_manager, PigStyManager::SendPigAmount, this, [ = ](PigAmount amount)
     {
         label_pig_amount -> setText(QString("Current pig amount:\n"
-                                            + QString::number(amount)));
+                                            + QString::number(amount.total)
+                                            + "\n\nBlackPig:\n"
+                                            + QString::number(amount.BlackPig)
+                                            + "\n\nSmallFlowerPig:\n"
+                                            + QString::number(amount.SmallFlowerPig)
+                                            + "\n\nBigWhitePig:\n"
+                                            + QString::number(amount.BigWhitePig)));
         label_pig_amount -> adjustSize();
     });
 }
@@ -323,22 +359,35 @@ void GameMainWindow::Connect_label_infection_status()
 {
     connect(pig_sty_manager, PigStyManager::InfectionExists, this, [ = ](bool infection_exists)
     {
-
+        // 改变前检查是否需要再次赋值，若连续赋值，QLabel有bug，背景会出现白色条纹。
         if (infection_exists)
         {
             // Turn to red.
-            this -> label_infection_status -> setStyleSheet("QLabel{color:rgb(255,48,48);}");
+            if (!(label_infection_status -> text().at(0) == 'O'))
+            {
+                this -> label_infection_status -> setStyleSheet("QLabel{color:rgba(255,48,48,255);}");
+            }
+
             this -> label_infection_status -> setText(QString("Outbreak!"));
             this -> label_infection_status -> adjustSize();
         }
         else
         {
             // Turn to green.
-            this -> label_infection_status -> setStyleSheet("QLabel{color:rgb(50,205,50);}");
+            if (!(label_infection_status -> text().at(0) == 'N'))
+            {
+                this -> label_infection_status -> setStyleSheet("QLabel{color:rgba(50,205,50,255);}");
+            }
+
             this -> label_infection_status -> setText(QString("No Infections."));
             this -> label_infection_status -> adjustSize();
         }
     });
+}
+
+void GameMainWindow::Connect_label_time_to_dieout()
+{
+
 }
 
 void GameMainWindow::Connect_button_to_Sty_Detail()
@@ -453,6 +502,27 @@ void GameMainWindow::ConfiguePauseButton()
         {
             game_timer -> start();
             ui -> pushButton_pause -> setText("Pause");
+        }
+    });
+}
+
+void GameMainWindow::ConfigueLabel_dieout()
+{
+    ui -> label_time_to_dieout -> setText("");
+    ui -> label_time_to_dieout -> setFont(QFont("Minecraft", 12));
+    connect(pig_sty_manager, PigStyManager::InfectionExists, this, [ = ](bool infection_exists)
+    {
+        if (infection_exists)
+        {
+            connect(pig_sty_manager, PigStyManager::SendTimeToDieOut, this, [ = ](int days)
+            {
+                ui -> label_time_to_dieout -> setText("Pigs will die in " + QString::number(days)
+                                                      + " days");
+            });
+        }
+        else
+        {
+            disconnect(pig_sty_manager, PigStyManager::SendTimeToDieOut, this, 0);
         }
     });
 }

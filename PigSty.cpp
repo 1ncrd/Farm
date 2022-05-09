@@ -3,8 +3,9 @@
 #include <QDebug>
 #include "MyRandom.hpp"
 
+const int PigSty::PigLiveTimeAfterInfected = 10;
 long PigSty::money = 0;
-PigSoldAmount PigSty::pig_sold_amount;
+PigAmount PigSty::pig_sold_amount{0, 0, 0, 0};
 int PigSty::InfectionTransRateInSty = 50;
 int PigSty::InfectionTransRateAcrossSty = 15;
 PigSty * PigSty::temp_instance = new PigSty("Temp Instance");
@@ -29,7 +30,6 @@ PigSty::PigSty(const QString &sty_id_temp, QObject *parent)
         this -> id = sty_id_temp;
     }
 
-    this -> pig_amount = 0;
     this -> ptr_pig_head = nullptr;
 }
 
@@ -53,7 +53,7 @@ void PigSty::AddPig(int number/* = 1*/)
         this -> ptr_pig_head = ptr_pig_current;
         RecordTrade(FileManager::Buy, ptr_pig_current);
         number--;
-        pig_amount++;
+        AddPigAmount(ptr_pig_current -> species);
     }
     else
     {
@@ -70,7 +70,7 @@ void PigSty::AddPig(int number/* = 1*/)
         ptr_pig_current -> next_pig = new Pig(id, order++, int(sty_species_situation));
         ptr_pig_current -> next_pig -> previous_pig = ptr_pig_current;
         RecordTrade(FileManager::Buy, ptr_pig_current -> next_pig);
-        pig_amount++;
+        AddPigAmount(ptr_pig_current -> species);
         ptr_pig_current = ptr_pig_current -> next_pig;
     }
 
@@ -91,8 +91,8 @@ void PigSty::AppendPig(Pig * const &ptr_pig_to_append_head)
         // Count the added amount.
         while (ptr_to_count != nullptr)
         {
+            AddPigAmount(ptr_to_count -> species);
             ptr_to_count = ptr_to_count -> next_pig;
-            pig_amount++;
         }
     }
     else
@@ -112,28 +112,30 @@ void PigSty::AppendPig(Pig * const &ptr_pig_to_append_head)
         // Count the added amount.
         while (ptr_to_count != nullptr)
         {
+            AddPigAmount(ptr_pig_current -> species);
             ptr_to_count = ptr_to_count -> next_pig;
-            pig_amount++;
+
         }
     }
 }
 
-void PigSty::AddRandomPig()
+void PigSty::AddTo10Pig()
 {
-    int number = Random() % (10 - this -> GetPigAmount());
+    int number = 10 - this -> GetPigTotalAmount();
     AddPig(number);
 }
 
-void PigSty::SellPig()
+int PigSty::SellPig()
 /*
  * Sell pigs meet the requirements.
  */
 {
     if (ptr_pig_head == nullptr)
     {
-        return;
+        return 0;
     }
 
+    int sale_money = 0;
     Pig * ptr_pig_current = ptr_pig_head;
     Pig * ptr_pig_next = ptr_pig_head -> next_pig;
 
@@ -142,7 +144,8 @@ void PigSty::SellPig()
         if (ptr_pig_current -> weight > 75 or ptr_pig_current -> age > 365)
         {
             assert(ptr_pig_current != nullptr);
-            AddMoney(Pig::SpeciesPrice[ptr_pig_current->species]);
+            sale_money += Pig::SpeciesPrice[ptr_pig_current->species];
+            AddMoney(Pig::SpeciesPrice[ptr_pig_current -> species]);
             AddSoldAmountPig(ptr_pig_current -> species);
             RecordTrade(FileManager::Sell, ptr_pig_current);
             DeletePig(ptr_pig_current);
@@ -155,7 +158,8 @@ void PigSty::SellPig()
     if (ptr_pig_current -> weight > 75 or ptr_pig_current -> age > 365)
     {
         assert(ptr_pig_current != nullptr);
-        AddMoney(Pig::SpeciesPrice[ptr_pig_current->species]);
+        sale_money += Pig::SpeciesPrice[ptr_pig_current -> species];
+        AddMoney(Pig::SpeciesPrice[ptr_pig_current -> species]);
         AddSoldAmountPig(ptr_pig_current -> species);
         RecordTrade(FileManager::Sell, ptr_pig_current);
         DeletePig(ptr_pig_current);
@@ -166,6 +170,7 @@ void PigSty::SellPig()
         emit SellPigFinished();
     }
 
+    return sale_money;
 }
 
 void PigSty::RecordTrade(const FileManager::TradeType &type, Pig * const &ptr_pig_to_record) const
@@ -197,8 +202,8 @@ void PigSty::DeletePig(Pig * const &ptr_pig_to_delete)
             ptr_pig_head -> previous_pig = nullptr;
         }
 
+        ReducePigAmount(ptr_pig_to_delete -> species);
         delete ptr_pig_to_delete;
-        pig_amount--;
     }
     else
     {
@@ -209,8 +214,8 @@ void PigSty::DeletePig(Pig * const &ptr_pig_to_delete)
             ptr_pig_to_delete -> next_pig -> previous_pig = ptr_pig_to_delete -> previous_pig;
         }
 
+        ReducePigAmount(ptr_pig_to_delete -> species);
         delete ptr_pig_to_delete;
-        pig_amount--;
     }
 
 }
@@ -238,7 +243,7 @@ void PigSty::InfectOnePig()
         return;
     }
 
-    int infected_pig_num = Random() % pig_amount;
+    int infected_pig_num = Random() % pig_amount.total;
     Pig * ptr_pig_current = ptr_pig_head;
 
     while (ptr_pig_current != nullptr and infected_pig_num > 0)
@@ -318,6 +323,36 @@ bool PigSty::InfectionExists()
     }
 
     return false;
+}
+
+void PigSty::InfectedPigDiedAfterTime()
+{
+    // The pigs died after being infected for some time.
+    if (ptr_pig_head == nullptr)
+    {
+        return;
+    }
+
+    Pig * ptr_pig_current = ptr_pig_head;
+    Pig * ptr_pig_next = ptr_pig_head -> next_pig;
+
+    while (ptr_pig_next != nullptr)
+    {
+        if (ptr_pig_current -> is_infected
+                and ptr_pig_current -> infected_time >= PigLiveTimeAfterInfected)
+        {
+            DeletePig(ptr_pig_current);
+        }
+
+        ptr_pig_current = ptr_pig_next;
+        ptr_pig_next = ptr_pig_next -> next_pig;
+    }
+
+    if (ptr_pig_current -> is_infected
+            and ptr_pig_current -> infected_time >= PigLiveTimeAfterInfected)
+    {
+        DeletePig(ptr_pig_current);
+    }
 }
 
 Pig * PigSty::ExtractInfectedPigs()
@@ -402,7 +437,7 @@ void PigSty::ExtractPig(Pig * pig_middle)
             ptr_pig_head -> previous_pig = nullptr;
         }
 
-        pig_amount--;
+        ReducePigAmount(pig_middle -> species);
     }
     else
     {
@@ -413,7 +448,7 @@ void PigSty::ExtractPig(Pig * pig_middle)
             pig_middle -> next_pig -> previous_pig = pig_middle -> previous_pig;
         }
 
-        pig_amount--;
+        ReducePigAmount(pig_middle -> species);
     }
 
 }
@@ -423,12 +458,57 @@ QString PigSty::GetID() const
     return this -> id;
 }
 
-int PigSty::GetPigAmount() const
+int PigSty::GetPigTotalAmount() const
 {
-    return this -> pig_amount;
+    return this -> pig_amount.total;
 }
 
-void PigSty::GetStyData()
+PigAmount PigSty::GetPigAmount() const
+{
+    return pig_amount;
+}
+
+void PigSty::AddPigAmount(Pig::PigSpecies species)
+{
+    switch (species)
+    {
+        case Pig::BlackPig:
+            pig_amount.BlackPig += 1;
+            break;
+
+        case Pig::SmallFlowerPig:
+            pig_amount.SmallFlowerPig += 1;
+            break;
+
+        case Pig::BigWhitePig:
+            pig_amount.BigWhitePig += 1;
+            break;
+    }
+
+    pig_amount.total += 1;
+}
+
+void PigSty::ReducePigAmount(Pig::PigSpecies species)
+{
+    switch (species)
+    {
+        case Pig::BlackPig:
+            pig_amount.BlackPig -= 1;
+            break;
+
+        case Pig::SmallFlowerPig:
+            pig_amount.SmallFlowerPig -= 1;
+            break;
+
+        case Pig::BigWhitePig:
+            pig_amount.BigWhitePig -= 1;
+            break;
+    }
+
+    pig_amount.total -= 1;
+}
+
+void PigSty::GetStyData_ReturnWithSignal()
 {
     // Use sending signal to communicate between thread safely.
     // Critical function: `SendStyData(result_data)`.
@@ -466,7 +546,7 @@ void PigSty::GetStyData()
     return;
 }
 
-QVector<Pig::PigInfo> PigSty::GetAllPigData()
+QVector<Pig::PigInfo> PigSty::GetStyData_ReturnWithValue()
 {
     QVector<Pig::PigInfo> result;
     bool infection_exists = false;
@@ -589,7 +669,7 @@ void PigSty::DeleteAllPigs()
     ptr_pig_head = nullptr;
 }
 
-void PigSty::SetSoldAmount(const PigSoldAmount &amount)
+void PigSty::SetSoldAmount(const PigAmount &amount)
 {
     pig_sold_amount.BlackPig = amount.BlackPig;
     pig_sold_amount.SmallFlowerPig = amount.SmallFlowerPig;

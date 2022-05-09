@@ -60,8 +60,3 @@ void SettingWindow::Start()
     SetVolume(BGM_player -> GetVolume());
     this -> show();
 }
-
-// TODO can set in game.
-// TODO Beautifier.
-// TODO Introduction in game.
-// TODO Maybe a minecraft book icon is good.

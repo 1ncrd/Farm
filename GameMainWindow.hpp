@@ -34,6 +34,7 @@ private:
     QLabel * label_date;
     QLabel * label_money;
     QLabel * label_pig_sold_amount;
+    QLabel * label_sale_money;
     QLabel * label_pig_amount;
     QLabel * label_infected_amount;
     QLabel * label_infection_status;
@@ -53,6 +54,7 @@ public:
     void Create_label_date();
     void Create_label_money();
     void Create_label_pig_sold_amount();
+    void Create_label_sale_money();
     void Create_label_pig_amount();
     void Create_label_infected_amount();
     void Create_label_infection_status();
@@ -68,9 +70,11 @@ public:
     void Connect_label_date();
     void Connect_label_money();
     void Connect_label_pig_sold_amount();
+    void Connect_label_sale_money();
     void Connect_label_pig_amount();
     void Connect_label_infected_amount();
     void Connect_label_infection_status();
+    void Connect_label_time_to_dieout();
     void Connect_button_to_Sty_Detail();
     void Connect_button_show_trade_record_window();
     void Connect_button_quarantine_pig();
@@ -79,6 +83,7 @@ public:
     void Sty_Detail_Window_PreLoad();
     void ConfigueArchiveStore();
     void ConfiguePauseButton();
+    void ConfigueLabel_dieout();
     void StoreGameData();
     void closeEvent(QCloseEvent *event);
 signals:

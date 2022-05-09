@@ -58,9 +58,3 @@ void ArchiveItem::SetDifficultyDisplay(const int &difficulty_level)
     ui -> label_difficulty -> setText(DifficultyLevelToQString[difficulty_level]);
     ui -> label_difficulty -> adjustSize();
 }
-
-// Activate the mouse click event.
-void ArchiveItem::mouseReleaseEvent(QMouseEvent *event)
-{
-    emit clicked();
-}

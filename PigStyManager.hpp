@@ -36,10 +36,14 @@ public:
     void SendInfectionInfo();
     void SetArchiveName(const QString &name);
     void CountPigAmount();
+    int CalculateTimeToDieout();
+    int * GetStyAround(int i, int sty_to_infect[]);
 signals:
     InfectionOccur();
     SellPigFinished();
-    SendPigAmount(int amount);
+    SendPigAmount(PigAmount amount);
+    SendSaleMoney(int sale_money);
+    SendTimeToDieOut(int days);
     SendInfectedAmount(int amount);
     SendStyData(QVector<Pig::PigInfo> sty_data);
     SendQuarantineStyData(QVector<Pig::PigInfo> sty_data);

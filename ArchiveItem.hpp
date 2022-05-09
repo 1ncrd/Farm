@@ -23,9 +23,6 @@ public:
 
 private:
     Ui::ArchiveItem *ui;
-
-protected:
-    virtual void mouseReleaseEvent(QMouseEvent * event);
 signals:
     clicked();
 };
