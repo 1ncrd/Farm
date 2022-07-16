@@ -26,7 +26,7 @@ long GameTimer::GetTime()
     return this -> total_time;
 }
 
-GameTimer::Date GameTimer::ConvertToDate(int day)
+GameTimer::Date GameTimer::ConvertToDate(int day) // 刚开始写的，然而后来并没有用到过，哈哈 ^ ^
 {
     int day_temp = day % 30 + 1;
     int month_temp = (day / 30) % 12 + 1;

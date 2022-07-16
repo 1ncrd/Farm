@@ -106,9 +106,11 @@ void Sty_Detail_Window::Start(const int &sty_num)
 {
     this -> LoadTitle(sty_num);
 
-    // [Bug Solved]: *** Before updating the pigs' information of ptr_sty, disconnect this to other ptr_sty ***.
-    // Otherwise the connection command will pile up when you press other button as the Sty_Detail_Window is open.
-    // This will take up memory, although it won't effect the correctness of what is displayed.
+    // [Bug Solved]: *** Before updating the pigs' information of ptr_sty,
+    // disconnect this to other ptr_sty ***.
+    // [Otherwise the connection command will pile up when you press other button as the Sty_Detail_Window is open.]
+    // [This will take up memory, although it won't effect the correctness of what is displayed.]
+    // In fact, now the window is set to be modal, So that's not going to happen.
     disconnect(game_timer, GameTimer::timeout, this, 0);
     disconnect(this, Sty_Detail_Window::RequestStyData, 0, 0);
 

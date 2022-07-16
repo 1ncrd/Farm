@@ -3,6 +3,7 @@
 MyPushButton::MyPushButton(QWidget *parent)
     : QPushButton{parent}
 {
+    // Add click sound.
     effect.setSource(QUrl::fromLocalFile("./Resources/Sound/button_click.wav"));
     effect.setLoopCount(1);
     effect.setVolume(0.3);

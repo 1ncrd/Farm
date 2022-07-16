@@ -13,6 +13,7 @@ PigAmount::PigAmount(int total, int BlackPig, int SmallFlowerPig, int BigWhitePi
     this -> BigWhitePig = BigWhitePig;
 }
 
+// Overload the addition operator.
 PigAmount PigAmount::operator + (const PigAmount& amount)
 {
     return PigAmount(this -> total + amount.total, this -> BlackPig + amount.BlackPig,

@@ -29,6 +29,7 @@ void SettingWindow::ConfigueVolumeControl()
     ui -> horizontalSlider_volume -> setMaximum(100);
     ui -> horizontalSlider_volume -> setMinimum(0);
     ui -> horizontalSlider_volume -> setTracking(true);
+
     connect(ui -> horizontalSlider_volume, QAbstractSlider::sliderMoved, this, [ = ]()
     {
         ui -> label_volume_value -> setText(QString::number(ui -> horizontalSlider_volume -> value()));

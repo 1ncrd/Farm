@@ -74,12 +74,16 @@ void CreateWindow::ConfigueButton()
     {
         QString archive_name(ui -> lineEdit_name -> text());
 
+        // Check whether the archive name already exists.
         if (current_existing_archive.contains(archive_name))
         {
             QMessageBox::warning(this, QString("Create fail"), QString("<font face = Minecraft size = 3>The archive name already exists!</font>"));
         }
         else
         {
+            // Create an archive and save the initial data.
+            // Because the operation here is not too time-consuming,
+            // I don't use the signal-and-slot for simplicity(简便) but call the function directly.
             FileManager::CreateArchiveFile(archive_name);
             FileManager::CreateSaleRecordFile(archive_name);
             FileManager::GameData game_data;

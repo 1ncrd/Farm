@@ -3,6 +3,7 @@
 #include <QDebug>
 #include "FileManager.hpp"
 
+// Convert the difficulty level to the corresponding string.
 std::map<int, QString> ArchiveItem::DifficultyLevelToQString =
 {
     {0, QString("Easy")},

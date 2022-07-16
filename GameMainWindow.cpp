@@ -59,7 +59,8 @@ GameMainWindow::GameMainWindow(QWidget *parent) :
     this -> Connect_button_show_quarantine_sty();
 
     // Without the "Sty_Detail_Window_PreLoad()",
-    // there will be a bit of lag to show the `sty_window` when the user clicks the pushbutton_entersty first time for some unknown reason.
+    // there will be a bit of lag to show the `sty_window`
+    // when the user clicks the pushbutton_entersty first time for some unknown reason.
     this -> ConfigueArchiveStore();
     this -> ConfiguePauseButton();
     this -> ConfigueLabel_dieout();
@@ -516,8 +517,15 @@ void GameMainWindow::ConfigueLabel_dieout()
         {
             connect(pig_sty_manager, PigStyManager::SendTimeToDieOut, this, [ = ](int days)
             {
-                ui -> label_time_to_dieout -> setText("Pigs will die in " + QString::number(days)
-                                                      + " days");
+                if (days >= 0)
+                {
+                    ui -> label_time_to_dieout -> setText("Pigs will die in " + QString::number(days)
+                                                          + " days");
+                }
+                else
+                {
+                    ui -> label_time_to_dieout -> setText("");
+                }
             });
         }
         else

@@ -29,7 +29,7 @@ int main(int argc, char *argv[])
     qRegisterMetaType<PigAmount>("PigSoldAmount&");
     QApplication a(argc, argv);
 
-    // 添加第三方字体。
+    // Add the third-party font。
     QFontDatabase::addApplicationFont("./Resources/Font/minecraft.ttf");
 
     // Create GameDatas and SalesRecords Folder.
@@ -43,8 +43,6 @@ int main(int argc, char *argv[])
     SettingWindow setting_window;
     home_window.show();
 
-    // Click the "Start Game" button to show the game window.
-    // QObject::connect(&home_window, HomeWindow::OnStartButtonClicked, &Game_window, GameMainWindow::StartGame);
     QObject::connect(&home_window, HomeWindow::OnStartButtonClicked, &archive_window, ArchiveWindow::show);
     QObject::connect(&home_window, HomeWindow::OnSettingButtonClicked, &setting_window, SettingWindow::Start);
     QObject::connect(&archive_window, ArchiveWindow::GameStart, &game_window, GameMainWindow::StartGame);

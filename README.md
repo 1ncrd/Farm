@@ -18,3 +18,7 @@ At the same time, it realize a part of function of the display of pig sale recor
 ## Version 3.0
 
 Add the archive management system. Now the program can read and write the archive.
+
+## trivia(琐事)
+
+There are a lot of signal-and-slot function in the program. Except for dealing with the UI, a major reason is that the program uses multiple threads and have to use the signal_and_slot function to pass information across threads.

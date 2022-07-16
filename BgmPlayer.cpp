@@ -11,7 +11,7 @@ BGMPlayer::BGMPlayer(QObject *parent)
 {
     player = new QMediaPlayer(this);
     output = new QAudioOutput(this);
-    // 音乐播放列表。
+    // Music list.
     music_list << "Wet Hands.mp3"
                << "Beginning.mp3"
                << "Clark.mp3"
@@ -22,7 +22,7 @@ BGMPlayer::BGMPlayer(QObject *parent)
     int play_num = Random() % 5;
     player -> setSource(QUrl::fromLocalFile(MusicPath + music_list.at(play_num)));
     player -> play();
-    // 循环随机播放列表中的音乐。
+    // Play music on a loop and pick music at random
     connect(player, QMediaPlayer::playbackStateChanged, this, [ = ]()
     {
         if (player -> playbackState() == QMediaPlayer::StoppedState)
@@ -50,11 +50,12 @@ void BGMPlayer::SetVolume(const int &volume_temp)
     }
 
     this -> volume = volume_temp;
+    // setVolume() receive the argument from 0 ~ 1.
     output -> setVolume(float(volume / 100.0));
-    qDebug() << player -> playbackState();
 }
 
 int BGMPlayer::GetVolume()
 {
+    // Get current volume.
     return int((output -> volume()) * 100);
 }

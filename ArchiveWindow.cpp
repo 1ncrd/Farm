@@ -14,7 +14,7 @@ ArchiveWindow::ArchiveWindow(QWidget *parent) :
 
     this -> setFixedSize(WindowWidth, WindowHeight);
     this -> setWindowTitle("The Pig Farm");
-    this -> setWindowIcon(QIcon(":/Resources/Picture/PigFace.png"));
+    this -> setWindowIcon(QIcon("./Resources/Picture/PigFace.png"));
 
     ui -> pushButton_create -> setFont(QFont("Minecraft", 15));
     ui -> pushButton_delete -> setFont(QFont("Minecraft", 15));
@@ -24,11 +24,14 @@ ArchiveWindow::ArchiveWindow(QWidget *parent) :
 
     ConfigueArchiveUpdate();
     // Update once at first.
+    // When loading the window, first get the archive list.
     file_manager -> StatisticsExistingArchives();
     ui -> pushButton_enter -> setDisabled(true);
     ui -> pushButton_delete -> setDisabled(true);
     connect(ui -> listWidget_archive_display, MyListWidget::ItemSelected, this, [ = ](bool selected)
     {
+        // Just entering the window, obviously no archive is selected,
+        // so the button is set to unavailable.
         ui -> pushButton_enter -> setDisabled(!selected);
         ui -> pushButton_delete -> setDisabled(!selected);
     });
@@ -39,6 +42,7 @@ ArchiveWindow::ArchiveWindow(QWidget *parent) :
         emit Back();
     });
 
+    // 设置显示存档列表的 listWidget 为半透明。
     QPalette palette = ui -> listWidget_archive_display -> palette();
     palette.setBrush(QPalette::Base, QBrush(QColor(255, 255, 255, 120)));
     ui -> listWidget_archive_display -> setPalette(palette);
@@ -75,20 +79,28 @@ void ArchiveWindow::ConfigueArchiveUpdate()
     });
     // Update the current existing archive list when new archive is created.
     connect(file_manager, FileManager::NewArchiveCreated, file_manager, FileManager::StatisticsExistingArchives);
+    // Send signal to request the file_manager to read archive data.
     connect(this, ArchiveWindow::RequestAllArchiveInfo, file_manager, FileManager::ReadAllArchiveData);
+    // Receive the data the file_manager send.
     connect(file_manager, FileManager::SendAllArchiveInfo, this, UpdateArchiveItem);
+    // Send signal to request the file_manager to delete archive and statistics the archive again.
     connect(this, ArchiveWindow::RequestDeleteArchive, file_manager, FileManager::DeleteArchive);
     connect(this, ArchiveWindow::RequestDeleteArchive, file_manager, FileManager::StatisticsExistingArchives);
+    // When the pushButton_delete is pressed, execute this function.
     connect(ui -> pushButton_delete, QPushButton::clicked, this, [ = ]()
     {
         QList<QListWidgetItem*> list = ui -> listWidget_archive_display -> selectedItems();
 
+        // If multiple archive is selected, pop-up warning.
+        // PS: In fact, I set the parameters so that only one archive can be selected at a time,
+        // so this if branch is not expected to be executed.
         if (list.length() > 1)
         {
             QMessageBox::warning(this, "!", QString("<font face = Minecraft size = 3>Please only select one archive!</font>"));
         }
         else if (list.length() == 1)
         {
+            // Prompt the user confirm the action.
             QMessageBox::StandardButton choice =
                 QMessageBox::question(this, "Comfirm", QString("<font face = Minecraft size = 3>Are you sure to delete this archive permanently?</font>"),
                                       QMessageBox::Yes | QMessageBox::No, QMessageBox::No);
@@ -105,9 +117,11 @@ void ArchiveWindow::ConfigueArchiveUpdate()
 
 void ArchiveWindow::UpdateArchiveItem(QVector<FileManager::GameData> data)
 {
+    // Update the archive list.
     current_existing_archive_data = data;
     ui -> listWidget_archive_display -> clear();
 
+    // Display all archive.
     for (int i = 0; i < data.length(); i++)
     {
         ArchiveItem * archive_item = new ArchiveItem;
@@ -145,6 +159,7 @@ void ArchiveWindow::mousePressEvent(QMouseEvent *event)
 {
     QMainWindow::mousePressEvent(event);
 
+    // When the user press the blank area, clear the archive selections.
     if (!(ui -> listWidget_archive_display -> underMouse()))
     {
         ui -> listWidget_archive_display -> clearSelection();
@@ -158,6 +173,7 @@ void ArchiveWindow::mousePressEvent(QMouseEvent *event)
 
 void ArchiveWindow::UpdateButtonEnable()
 {
+    // If no archive is selected, set the button disable.
     if ((ui -> listWidget_archive_display -> selectedItems()).length() == 0)
     {
         ui -> pushButton_enter -> setDisabled(true);

@@ -29,7 +29,7 @@ private:
     QString in_sty_id;          // 0 ~ 99
     QString id;                 // sty_id + birthday / 30 + order. I didn't use the 0~9 because it looks a little bit strange.
     int age;                    // day
-    volatile float weight;      // kg
+    volatile float weight;      // kg, volatile 可能不是必要的，在我尝试多线程编程时，多次遇到崩溃，加入这个修饰词只是我调试中的尝试。
     PigSpecies species;
     bool is_infected;
     int infected_time;

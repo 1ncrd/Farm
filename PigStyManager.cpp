@@ -290,8 +290,8 @@ int PigStyManager::CalculateTimeToDieout()
 {
     int day_result = 0;
     const int TimeSpreadAcross = 100 / PigSty::InfectionTransRateAcrossSty;
-
     int min = 100;
+    bool infection_exists = false;
 
     for (int i = 0; i < PigStyPerColumn; i++)
     {
@@ -299,6 +299,7 @@ int PigStyManager::CalculateTimeToDieout()
         {
             if (pig_sty[i * PigStyPerColumn + j] -> InfectionExists())
             {
+                infection_exists = true;
                 int distance = 0;
 
                 if (i > 5)
@@ -330,7 +331,15 @@ int PigStyManager::CalculateTimeToDieout()
     day_result = min * (TimeSpreadAcross - 1);
     day_result += 10;
     qDebug() << "[+] Day to dieout:" << day_result;
-    return day_result;
+
+    if (infection_exists)
+    {
+        return day_result;
+    }
+    else
+    {
+        return -1;
+    }
 }
 
 int * PigStyManager::GetStyAround(int i, int sty_to_infect[4])
